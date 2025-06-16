@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "import": "../../dist/esm/lib/intents/index.js",
+  "main": "../../dist/cjs/lib/intents/index.js",
+  "sideEffects": false
+}

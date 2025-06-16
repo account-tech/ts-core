@@ -4,3 +4,4 @@ build
 package-lock.json
 bun.lockb
 tsconfig.tsbuildinfo
+src/**/*.d.ts

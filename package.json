@@ -1,21 +1,59 @@
 {
   "name": "@account.tech/core",
-  "author": "Thouny <thouny@tuta.io>",
-  "description": "Core library for defining account sdks with account.tech",
   "version": "0.1.24",
+  "description": "Core library for defining account SDKs with account.tech",
+  "author": "Thouny <thouny@tuta.io>",
   "license": "Apache-2.0",
+  "type": "commonjs",
+  "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "sdk",
+    "lib",
+    "src",
+    "types",
+    "README.md",
+    "LICENSE"
   ],
-  "type": "module",
-  "module": "./dist/esm/index.js",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./lib/account": {
+      "import": "./dist/esm/lib/account/index.js",
+      "require": "./dist/cjs/lib/account/index.js"
+    },
+    "./lib/commands": {
+      "import": "./dist/esm/lib/commands/index.js",
+      "require": "./dist/cjs/lib/commands/index.js"
+    },
+    "./lib/extensions": {
+      "import": "./dist/esm/lib/extensions/index.js",
+      "require": "./dist/cjs/lib/extensions/index.js"
+    },
+    "./lib/intents": {
+      "import": "./dist/esm/lib/intents/index.js",
+      "require": "./dist/cjs/lib/intents/index.js"
+    },
+    "./lib/objects": {
+      "import": "./dist/esm/lib/objects/index.js",
+      "require": "./dist/cjs/lib/objects/index.js"
+    },
+    "./lib/user": {
+      "import": "./dist/esm/lib/user/index.js",
+      "require": "./dist/cjs/lib/user/index.js"
+    },
+    "./sdk": {
+      "import": "./dist/esm/sdk/index.js",
+      "require": "./dist/cjs/sdk/index.js"
+    },
+    "./types": {
+      "import": "./dist/esm/types/index.js",
+      "require": "./dist/cjs/types/index.js"
+    }
+  },
   "scripts": {
-    "clean": "rm -rf tsconfig.tsbuildinfo ./dist",
-    "build": "rm -rf dist/ && rm -rf tsconfig.tsbuildinfo && bun build:tsup && bun build:types",
-    "build:tsup": "tsup ./src/* --format esm,cjs --sourcemap",
-    "build:types": "tsc --build"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "build:types": "tsc --build tsconfig.json && tsc --build tsconfig.esm.json",
+    "build": "bun run clean && bun run build:tsup && bun run build:types",
+    "build:tsup": "tsup"
   },
   "dependencies": {
     "@mysten/kiosk": "^0.12.11",
@@ -27,9 +65,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/chai": "^4.3.20",
-    "@types/node": "^20.19.0",
+    "@types/node": "^20.17.47",
     "chai": "^5.2.0",
-    "tsup": "^8.5.0",
+    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   }
 }

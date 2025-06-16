@@ -59,18 +59,29 @@ export class User implements UserData {
 	}
 
 	async fetchProfile(owner: string): Promise<Profile> {
-		// default values
-		let username = owner.slice(0, 5) + "..." + owner.slice(-3);
+		let username = `${owner.slice(0, 5)}...${owner.slice(-3)}`;
 		let avatar = "https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-1024.png";
-		
-		const names = (await this.client.resolveNameServiceNames({ format: "at", address: owner })).data;
-		if (names.length > 0) {
-			username = names[0];
-			// get user avatar
-			const suinsClient = new SuinsClient({ client: this.client, network: 'mainnet' });
-			const nameRecord = await suinsClient.getNameRecord(names[0]);
-	
-			nameRecord && nameRecord.avatar && (avatar = nameRecord.avatar);
+
+		try {
+			const names = (await this.client.resolveNameServiceNames({ format: "at", address: owner })).data;
+
+			if (names.length > 0) {
+				username = names[0];
+
+				const networks = ["mainnet", "testnet"];
+				for (const network of networks) {
+					try {
+						const suinsClient = new SuinsClient({ client: this.client, network: network as "mainnet" | "testnet",});
+						const nameRecord = await suinsClient.getNameRecord(username);
+						if (nameRecord?.avatar) {
+							avatar = nameRecord.avatar;
+							break;
+						}
+					} catch (err) {
+					}
+				}
+			}
+		} catch (err) {
 		}
 
 		return { username, avatar };
@@ -84,7 +95,7 @@ export class User implements UserData {
 			options: { showContent: true }
 		});
 		if (inviteData.length === 0) return [];
-		
+
 		const invitesParsed = inviteData
 			.map(invite => InviteRaw.fromSuiParsedData(invite.data?.content!))
 			.filter(invite => normalizeStructTag(invite.accountType) === this.accountType);
