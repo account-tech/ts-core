@@ -168,7 +168,7 @@ export class UpdateMetadataIntent extends Intent {
     ) {
         currencyIntent.requestUpdateMetadata(
             tx,
-            [...accountGenerics, this.args!.coinType],
+            [...accountGenerics, actionArgs.coinType],
             {
                 auth,
                 account,
@@ -605,7 +605,7 @@ export class WithdrawAndBurnIntent extends Intent {
             this.args!.coinType,
             expired
         );
-intents.destroyEmptyExpired(
+        intents.destroyEmptyExpired(
             tx,
             expired,
         );
