@@ -1,7 +1,7 @@
 export type ExtensionData = {
     name: string;
     history: {
-        package: string;
+        addr: string;
         version: number;
     }[];
 }; 
