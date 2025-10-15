@@ -1,14 +1,13 @@
 import { SuiClient } from "@mysten/sui/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
-
-import { claim as claimVesting, cancelPayment as cancelPaymentVesting, destroyEmpty as destroyEmptyVesting, destroyCap as destroyCapVesting } from "src/.gen/account-actions/vesting/functions";
-import { ACCOUNT_ACTIONS, CLOCK } from "src/types";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import { claim as claimVesting, cancelPayment as cancelPaymentVesting, destroyEmpty as destroyEmptyVesting, destroyCap as destroyCapVesting } from "../../packages/account_actions/vesting";
+import { ACCOUNT_ACTIONS } from "../../types";
 
 export async function getCaps(
-    client: SuiClient, 
+    client: SuiClient,
     addr: string
-): Promise<{capId: string, vestingId: string}[]> {
+): Promise<{ capId: string, vestingId: string }[]> {
     const caps = await client.getOwnedObjects({
         owner: addr,
         filter: { StructType: `${ACCOUNT_ACTIONS.V1}::vesting::ClaimCap` },
@@ -21,15 +20,15 @@ export async function getCaps(
 }
 
 export async function getVestings(
-    client: SuiClient, 
+    client: SuiClient,
     ids: string[]
 ): Promise<{
-    coinType: string, 
-    id: string, 
-    balance: bigint, 
-    lastClaimed: bigint, 
-    startTimestamp: bigint, 
-    endTimestamp: bigint, 
+    coinType: string,
+    id: string,
+    balance: bigint,
+    lastClaimed: bigint,
+    startTimestamp: bigint,
+    endTimestamp: bigint,
     recipient: string
 }[]> {
     let vestings = [];
@@ -58,55 +57,46 @@ export async function getVestings(
 
 /// Claims the unlocked amount of a vesting
 export function claim(
-    tx: Transaction,
     coinType: string,
-    vesting: TransactionObjectInput,
-    cap: TransactionObjectInput,
+    vesting: TransactionArgument,
+    cap: TransactionArgument,
 ) {
-    claimVesting(
-        tx,
-        coinType,
-        {
-            vesting,
-            cap,
-            clock: CLOCK,
-        }
-    )
+    claimVesting({
+        typeArguments: [coinType],
+        arguments: { vesting, cap },
+    });
 }
 
 /// Cancels a vesting and sends back the coin to the account
 export function cancelPayment(
-    tx: Transaction,
     configType: string,
     coinType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    vesting: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    vesting: TransactionArgument,
 ) {
-    cancelPaymentVesting(
-        tx,
-        [configType, coinType],
-        {
-            auth,
-            vesting,
-            account,
-        }
-    )
+    cancelPaymentVesting({
+        typeArguments: [configType, coinType],
+        arguments: { auth, vesting, account },
+    });
 }
 
 /// Destroys a Vesting object with empty balance
 export function destroyEmpty(
-    tx: Transaction,
     coinType: string,
-    vesting: TransactionObjectInput,
+    vesting: TransactionArgument,
 ) {
-    destroyEmptyVesting(tx, coinType, vesting)
+    destroyEmptyVesting({
+        typeArguments: [coinType],
+        arguments: { vesting },
+    });
 }
 
 /// Destroys a ClaimCap
 export function destroyCap(
-    tx: Transaction,
-    cap: TransactionObjectInput,
+    cap: TransactionArgument,
 ) {
-    destroyCapVesting(tx, cap)
+    destroyCapVesting({
+        arguments: { cap },
+    });
 }

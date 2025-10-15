@@ -1,95 +1,78 @@
-import { open, place, delist, withdrawProfits, close } from "src/.gen/account-actions/kiosk/functions";
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
-import { TransactionPureInput } from "src/types/helpers";
-import { SUI_FRAMEWORK } from "src/types";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import { open, place, delist, withdrawProfits, close } from "../../packages/account_actions/kiosk";
 
 /// Opens a Kiosk managed by the Account
 export function openKiosk(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
     name: string,
 ) {
-    open(
-        tx,
-        configType,
-        { auth, account, name },
-    );
+    open({
+        typeArguments: [configType],
+        arguments: { auth, account, name },
+    });
 }
 
 /// Places an object in the Kiosk, the object must come from another Kiosk
 export function placeInKiosk(
-    tx: Transaction,
     configType: string,
     nftType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    accountKiosk: TransactionObjectInput,
-    senderKiosk: TransactionObjectInput,
-    senderCap: TransactionObjectInput,
-    transferPolicy: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    accountKiosk: TransactionArgument,
+    senderKiosk: TransactionArgument,
+    senderCap: TransactionArgument,
+    transferPolicy: TransactionArgument,
     kioskName: string,
-    nftId: TransactionPureInput,
+    nftId: TransactionArgument,
 ) {
-    const request = place(
-        tx,
-        [configType, nftType],
-        { auth, account, accountKiosk, senderKiosk, senderCap, policy: transferPolicy, name: kioskName, nftId },
-    );
-    tx.moveCall({
-        target: `${SUI_FRAMEWORK}::transfer_policy::confirm_request`,
-        typeArguments: [nftType],
-        arguments: [tx.object(transferPolicy), request]
+    place({
+        typeArguments: [configType, nftType],
+        arguments: { auth, account, accountKiosk, senderKiosk, senderCap, policy: transferPolicy, name: kioskName, nftId },
     });
 }
 
 /// Delists an object from the Kiosk
 export function delistFromKiosk(
-    tx: Transaction,
     configType: string,
     nftType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    kiosk: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    kiosk: TransactionArgument,
     name: string,
-    nftId: TransactionPureInput,
+    nftId: TransactionArgument,
 ) {
-    delist(
-        tx,
-        [configType, nftType],
-        { auth, account, kiosk, name, nftId },
-    );
+    delist({
+        typeArguments: [configType, nftType],
+        arguments: { auth, account, kiosk, name, nftId },
+    });
 }
 
 /// Withdraws the profits from the Kiosk to the Account
 export function withdrawProfitsFromKiosk(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    kiosk: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    kiosk: TransactionArgument,
     name: string,
 ) {
-    withdrawProfits(
-        tx,
-        configType,
-        { auth, account, kiosk, name },
-    );
+    withdrawProfits({
+        typeArguments: [configType],
+        arguments: { auth, account, kiosk, name },
+    });
 }
 
 /// Closes an empty Kiosk managed by the Account
 export function closeKiosk(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    kiosk: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    kiosk: TransactionArgument,
     name: string,
 ) {
-    close(
-        tx,
-        configType,
-        { auth, account, kiosk, name },
-    );
+    close({
+        typeArguments: [configType],
+        arguments: { auth, account, kiosk, name },
+    });
 }

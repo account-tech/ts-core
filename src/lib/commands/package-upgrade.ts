@@ -1,19 +1,17 @@
-import { lockCap } from "src/.gen/account-actions/package-upgrade/functions";
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import { lockCap } from "../../packages/account_actions/package_upgrade";
 
 /// Deposits and locks an UpgradeCap in the Account
 export function depositUpgradeCap(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    upgradeCap: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    upgradeCap: TransactionArgument,
     packageName: string, // can be anything
     delayMs: bigint,
 ) {
-    lockCap(
-        tx,
-        configType,
-        { auth, account, cap: upgradeCap, name: packageName, delayMs },
-    );
+    lockCap({
+        typeArguments: [configType],
+        arguments: { auth, account, cap: upgradeCap, name: packageName, delayMs },
+    });
 }

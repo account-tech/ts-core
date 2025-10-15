@@ -1,18 +1,16 @@
-import { lockCap } from "src/.gen/account-actions/access-control/functions";
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import { lockCap } from "../../packages/account_actions/access_control";
 
 /// Deposits and locks a Cap object in the Account
 export function depositCap(
-    tx: Transaction,
     configType: string,
     capType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
-    capObject: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
+    capObject: TransactionArgument,
 ) {
-    lockCap(
-        tx,
-        [configType, capType],
-        { auth, account, cap: capObject },
-    );
+    lockCap({
+        typeArguments: [configType, capType],
+        arguments: { auth, account, cap: capObject },
+    });
 }

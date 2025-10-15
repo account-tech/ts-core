@@ -1,49 +1,44 @@
-import { open, deposit, close } from "src/.gen/account-actions/vault/functions";
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import { open, deposit, close } from "../../packages/account_actions/vault";
 
 /// Opens a Vault managed by the Account
 export function openVault(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
     name: string,
 ) {
-    open(
-        tx,
-        configType,
-        { auth, account, name },
-    );
+    open({
+        typeArguments: [configType],
+        arguments: { auth, account, name },
+    });
 }
 
 /// Deposits an object into the Vault from the caller wallet
 export function depositFromWallet(
-    tx: Transaction,
     configType: string,
     coinType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
     name: string,
-    coin: TransactionObjectInput,
+    coin: TransactionArgument,
 ) {
-    deposit(
-        tx,
-        [configType, coinType],
-        { auth, account, name, coin },
-    );
+    deposit({
+        typeArguments: [configType, coinType],
+        arguments: { auth, account, name, coin },
+    });
 }
 
 /// Closes the Vault if empty
 export function closeVault(
-    tx: Transaction,
     configType: string,
-    auth: TransactionObjectInput,
-    account: TransactionObjectInput,
+    auth: TransactionArgument,
+    account: TransactionArgument,
     name: string,
 ) {
     close(
-        tx,
-        configType,
-        { auth, account, name },
-    );
+        {
+            typeArguments: [configType],
+            arguments: { auth, account, name },
+        });
 }
