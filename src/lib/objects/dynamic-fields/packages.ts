@@ -1,6 +1,5 @@
 import { SuiMoveObject } from "@mysten/sui/client";
-import { UpgradeCap } from "../../../.gen/_dependencies/source/0x2/package/structs";
-import { UpgradeRules } from "../../../.gen/account-actions/package-upgrade/structs";
+import { UpgradeRules } from "../../../packages/account_actions/package_upgrade";
 import { ManagedKeyTypes, Package } from "../types";
 import { Asset } from "../managed";
 
@@ -19,13 +18,13 @@ export class Packages extends Asset {
             const batch = dfIds.slice(i, i + 50);
             const batchResults = await this.client.multiGetObjects({
                 ids: batch,
-                options: { showContent: true }
+                options: { showContent: true, showBcs: true }
             });
             dfContents.push(...batchResults);
         }
     
         // Create lookup maps
-        const nameToCapRules: Record<string, { cap: SuiMoveObject | null, rules: SuiMoveObject | null }> = {};
+        const nameToCapRules: Record<string, { capFields: any | null, rulesBcs: string | null }> = {};
     
         dfContents.forEach(obj => {
             if (!obj.data?.content) return;
@@ -33,33 +32,32 @@ export class Packages extends Asset {
             if (moveObj.type?.includes('UpgradeRules')) {
                 const name = (this.dfs.find(df => df.objectId === obj.data?.objectId)?.name.value as any).pos0;
                 if (!nameToCapRules[name]) {
-                    nameToCapRules[name] = { cap: null, rules: null };
+                    nameToCapRules[name] = { capFields: null, rulesBcs: null };
                 }
-                nameToCapRules[name].rules = moveObj;
+                if (obj.data?.bcs?.dataType !== 'moveObject') {
+                    throw new Error('Expected a move object')
+                }
+                nameToCapRules[name].rulesBcs = obj.data.bcs?.bcsBytes;
             } else if (moveObj.type?.includes('UpgradeCap')) {
                 const name = (this.dfs.find(df => df.objectId === obj.data?.objectId)?.name.value as any).pos0;
                 if (!nameToCapRules[name]) {
-                    nameToCapRules[name] = { cap: null, rules: null };
+                    nameToCapRules[name] = { capFields: null, rulesBcs: null };
                 }
-                nameToCapRules[name].cap = moveObj;
+                nameToCapRules[name].capFields = moveObj.fields;
             }
         });
     
         // Process each upgrade policy
-        for (const [name, { cap, rules }] of Object.entries(nameToCapRules)) {
-            if (!rules || !cap) continue;
-    
-            const upgradeRules = UpgradeRules.fromFieldsWithTypes((rules.fields as any).value);
-            const upgradeCap = UpgradeCap.fromSuiParsedData(cap);
+        for (const [name, { capFields, rulesBcs }] of Object.entries(nameToCapRules)) {
+            if (!rulesBcs || !capFields) continue;
+            const upgradeRules = UpgradeRules.fromBase64(rulesBcs);
     
             this.assets[name] = {
-                packageId: upgradeCap.package,
-                capId: upgradeCap.id,
-                policy: upgradeCap.policy,
-                delayMs: upgradeRules.delayMs,
+                packageId: capFields.package,
+                capId: capFields.id.id,
+                policy: capFields.policy,
+                delayMs: BigInt(upgradeRules.delay_ms),
             };
         }
     }
-    
-    
 }

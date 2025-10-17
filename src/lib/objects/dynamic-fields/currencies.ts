@@ -1,6 +1,4 @@
-import { phantom } from "../../../.gen/_framework/reified";
-import { TreasuryCap } from "../../../.gen/_dependencies/source/0x2/coin/structs";
-import { CurrencyRules } from "../../../.gen/account-actions/currency/structs";
+import { CurrencyRules } from "../../../packages/account_actions/currency";
 import { Currency, ManagedKeyTypes } from "../types";
 import { SuiMoveObject } from "@mysten/sui/client";
 import { Asset } from "../managed";
@@ -20,13 +18,13 @@ export class Currencies extends Asset {
             const batch = dfIds.slice(i, i + 50);
             const batchResults = await this.client.multiGetObjects({
                 ids: batch,
-                options: { showContent: true }
+                options: { showContent: true, showBcs: true }
             });
             dfContents.push(...batchResults);
         }
 
         // Create lookup map
-        const coinTypeToCapRules: Record<string, { cap: SuiMoveObject | null, rules: SuiMoveObject | null }> = {};
+        const coinTypeToCapRules: Record<string, { capFields: any | null, rulesBcs: string | null }> = {};
     
         dfContents.forEach(obj => {
             if (!obj.data?.content) return;
@@ -34,36 +32,38 @@ export class Currencies extends Asset {
             if (moveObj.type?.includes('CurrencyRules')) {
                 const coinType = (moveObj.fields as any).name.type.match(/<([^>]*)>/)![1];
                 if (!coinTypeToCapRules[coinType]) {
-                    coinTypeToCapRules[coinType] = { cap: null, rules: null };
+                    coinTypeToCapRules[coinType] = { capFields: null, rulesBcs: null };
                 }
-                coinTypeToCapRules[coinType].rules = moveObj;
+                if (obj.data?.bcs?.dataType !== 'moveObject') {
+                    throw new Error('Expected a move object')
+                }
+                coinTypeToCapRules[coinType].rulesBcs = obj.data.bcs?.bcsBytes;
             } else if (moveObj.type?.includes('TreasuryCap')) {
                 const coinType = moveObj.type.match(/<([^>]*)>/)![1];
                 if (!coinTypeToCapRules[coinType]) {
-                    coinTypeToCapRules[coinType] = { cap: null, rules: null };
+                    coinTypeToCapRules[coinType] = { capFields: null, rulesBcs: null };
                 }
-                coinTypeToCapRules[coinType].cap = moveObj;
+                coinTypeToCapRules[coinType].capFields = moveObj.fields;
             }
         });
         
         // Process each currency
-        for (const [coinType, { cap, rules }] of Object.entries(coinTypeToCapRules)) {
-            if (!rules || !cap) continue;
+        for (const [coinType, { capFields, rulesBcs }] of Object.entries(coinTypeToCapRules)) {
+            if (!rulesBcs || !capFields) continue;
             
-            const currencyRules = CurrencyRules.fromFieldsWithTypes(phantom(coinType), (rules.fields as any).value);
-            const treasuryCap = TreasuryCap.fromSuiParsedData(phantom(coinType), cap);
+            const currencyRules = CurrencyRules.fromBase64(rulesBcs);
     
             this.assets[coinType] = {
-                currentSupply: treasuryCap.totalSupply.value,
-                maxSupply: currencyRules.maxSupply ?? null,
-                totalMinted: currencyRules.totalMinted,
-                totalBurned: currencyRules.totalBurned,
-                canMint: currencyRules.canMint,
-                canBurn: currencyRules.canBurn,
-                canUpdateSymbol: currencyRules.canUpdateSymbol,
-                canUpdateName: currencyRules.canUpdateName,
-                canUpdateDescription: currencyRules.canUpdateDescription,
-                canUpdateIcon: currencyRules.canUpdateIcon,
+                currentSupply: BigInt(capFields.total_supply.value),
+                maxSupply: currencyRules.max_supply ? BigInt(currencyRules.max_supply) : null,
+                totalMinted: BigInt(currencyRules.total_minted),
+                totalBurned: BigInt(currencyRules.total_burned),
+                canMint: currencyRules.can_mint,
+                canBurn: currencyRules.can_burn,
+                canUpdateSymbol: currencyRules.can_update_symbol,
+                canUpdateName: currencyRules.can_update_name,
+                canUpdateDescription: currencyRules.can_update_description,
+                canUpdateIcon: currencyRules.can_update_icon,
             } as Currency;
         }
     }

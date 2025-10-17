@@ -57,19 +57,19 @@
     "codegen": "sui-ts-codegen generate"
   },
   "dependencies": {
-    "@mysten/codegen": "^0.5.3",
-    "@mysten/kiosk": "^0.12.26",
-    "@mysten/sui": "^1.38.0",
+    "@mysten/codegen": "^0.5.5",
+    "@mysten/kiosk": "^0.13.6",
+    "@mysten/sui": "^1.42.0",
     "@mysten/suins": "^0.7.36",
     "@polymedia/coinmeta": "^0.0.24",
-    "bun-types": "^1.2.22"
+    "bun-types": "^1.3.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/chai": "^4.3.20",
-    "@types/node": "^20.19.17",
+    "@types/node": "^20.19.22",
     "chai": "^5.3.3",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
