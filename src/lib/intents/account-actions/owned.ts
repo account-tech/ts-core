@@ -124,7 +124,7 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
     }
 }
 
-export class WithdrawAndTransferObjectIntent extends Intent {
+export class WithdrawObjectsAndTransferIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndTransfer;
     declare args: WithdrawObjectsAndTransferArgs;
     typeById: Map<string, string> = new Map();
@@ -240,7 +240,7 @@ export class WithdrawAndTransferObjectIntent extends Intent {
     }
 }
 
-export class WithdrawAndTransferCoinIntent extends Intent {
+export class WithdrawCoinAndTransferIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndTransfer;
     declare args: WithdrawCoinAndTransferArgs;
     coinIds?: string[];

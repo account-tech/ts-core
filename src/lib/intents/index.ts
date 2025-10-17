@@ -3,7 +3,7 @@ export {
     UpdateMetadataIntent, DisableRulesIntent, MintAndTransferIntent, MintAndVestIntent, WithdrawAndBurnIntent,
     TakeNftsIntent, ListNftsIntent,
     UpgradePackageIntent, RestrictPolicyIntent,
-    WithdrawAndTransferToVaultIntent, WithdrawAndTransferIntent, WithdrawAndVestIntent,
+    WithdrawAndTransferToVaultIntent, WithdrawObjectsAndTransferIntent, WithdrawCoinAndTransferIntent, WithdrawAndVestIntent,
     SpendAndTransferIntent, SpendAndVestIntent,
 } from "./account-actions";
 export { ConfigDepsIntent, ToggleUnverifiedAllowedIntent } from "./protocol/config";
@@ -16,7 +16,7 @@ export type {
     BorrowCapArgs,
     DisableRulesArgs, UpdateMetadataArgs, MintAndTransferArgs, MintAndVestArgs, WithdrawAndBurnArgs,
     TakeNftsArgs, ListNftsArgs,
-    WithdrawAndTransferToVaultArgs, WithdrawAndTransferArgs, WithdrawAndVestArgs,
+    WithdrawAndTransferToVaultArgs, WithdrawObjectsAndTransferArgs, WithdrawCoinAndTransferArgs, WithdrawAndVestArgs,
     SpendAndTransferArgs, SpendAndVestArgs,
     UpgradePackageArgs, RestrictPolicyArgs,
 } from "./types";
