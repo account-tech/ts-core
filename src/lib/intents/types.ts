@@ -1,4 +1,4 @@
-import { ACCOUNT_ACTIONS, ACCOUNT_PROTOCOL, TransactionPureInput } from "../../types";
+import { ACCOUNT_ACTIONS, ACCOUNT_PROTOCOL } from "../../types";
 import { Dep } from "../account";
 
 export const ProtocolRoles = {
@@ -75,7 +75,7 @@ export type ActionsArgs =
     BorrowCapArgs |
     DisableRulesArgs | UpdateMetadataArgs | MintAndTransferArgs | MintAndVestArgs | WithdrawAndBurnArgs |
     TakeNftsArgs | ListNftsArgs |
-    WithdrawAndTransferToVaultArgs | WithdrawAndTransferArgs | WithdrawAndVestArgs |
+    WithdrawAndTransferToVaultArgs | WithdrawObjectsAndTransferArgs | WithdrawCoinAndTransferArgs | WithdrawAndVestArgs |
     SpendAndTransferArgs | SpendAndVestArgs |
     UpgradePackageArgs | RestrictPolicyArgs;
 
@@ -122,7 +122,6 @@ export type MintAndVestArgs = {
 
 export type WithdrawAndBurnArgs = {
     coinType: string;
-    coinId: TransactionPureInput;
     amount: bigint;
 }
 
@@ -139,17 +138,22 @@ export type ListNftsArgs = {
 
 export type WithdrawAndTransferToVaultArgs = {
     coinType: string;
-    coinId: TransactionPureInput;
     coinAmount: bigint;
     vaultName: string;
 }
 
-export type WithdrawAndTransferArgs = {
-    transfers: { objectId: TransactionPureInput, recipient: string }[];
+export type WithdrawObjectsAndTransferArgs = {
+    transfers: { objectId: string, recipient: string }[];
+}
+
+export type WithdrawCoinAndTransferArgs = {
+    coinType: string;
+    transfers: { amount: bigint, recipient: string }[];
 }
 
 export type WithdrawAndVestArgs = {
-    coinId: TransactionPureInput;
+    coinType: string;
+    coinAmount: bigint;
     start: bigint;
     end: bigint;
     recipient: string;

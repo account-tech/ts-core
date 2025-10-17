@@ -36,7 +36,7 @@ export interface NewTransferOptions<IW extends BcsType<any>> {
 export function newTransfer<IW extends BcsType<any>>(options: NewTransferOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Intent<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
         'address',
         `${options.typeArguments[1]}`
     ] satisfies string[];
@@ -71,7 +71,7 @@ export interface DoTransferOptions<T extends BcsType<any>, IW extends BcsType<an
 export function doTransfer<T extends BcsType<any>, IW extends BcsType<any>>(options: DoTransferOptions<T, IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::executable::Executable<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[0]}>`,
         `${options.typeArguments[1]}`,
         `${options.typeArguments[2]}`
     ] satisfies string[];
@@ -97,7 +97,7 @@ export interface DeleteTransferOptions {
 export function deleteTransfer(options: DeleteTransferOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Expired'
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({

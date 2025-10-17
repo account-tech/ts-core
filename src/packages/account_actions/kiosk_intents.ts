@@ -36,9 +36,9 @@ export interface RequestTakeNftsOptions<Outcome extends BcsType<any>> {
 export function requestTakeNfts<Outcome extends BcsType<any>>(options: RequestTakeNftsOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Auth',
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Account<${options.typeArguments[0]}>`,
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Params',
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
         `${options.typeArguments[1]}`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'vector<0x0000000000000000000000000000000000000000000000000000000000000002::object::ID>',
@@ -84,8 +84,8 @@ export interface ExecuteTakeNftsOptions {
 export function executeTakeNfts(options: ExecuteTakeNftsOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::executable::Executable<${options.typeArguments[1]}>`,
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Account<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Kiosk',
         '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Kiosk',
         '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::KioskOwnerCap',
@@ -129,9 +129,9 @@ export interface RequestListNftsOptions<Outcome extends BcsType<any>> {
 export function requestListNfts<Outcome extends BcsType<any>>(options: RequestListNftsOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Auth',
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Account<${options.typeArguments[0]}>`,
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Params',
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
         `${options.typeArguments[1]}`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'vector<0x0000000000000000000000000000000000000000000000000000000000000002::object::ID>',
@@ -171,8 +171,8 @@ export interface ExecuteListNftsOptions {
 export function executeListNfts(options: ExecuteListNftsOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::executable::Executable<${options.typeArguments[1]}>`,
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Account<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Kiosk'
     ] satisfies string[];
     const parameterNames = ["executable", "account", "kiosk"];

@@ -82,9 +82,9 @@ export interface CancelPaymentOptions {
 export function cancelPayment(options: CancelPaymentOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Auth',
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
         `${packageAddress}::vesting::Vesting<${options.typeArguments[1]}>`,
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::account::Account<${options.typeArguments[0]}>`
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`
     ] satisfies string[];
     const parameterNames = ["auth", "vesting", "account"];
     return (tx: Transaction) => tx.moveCall({
@@ -168,7 +168,7 @@ export interface NewVestOptions<IW extends BcsType<any>> {
 export function newVest<IW extends BcsType<any>>(options: NewVestOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Intent<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
         'u64',
         'u64',
         'address',
@@ -205,7 +205,7 @@ export interface DoVestOptions<IW extends BcsType<any>> {
 export function doVest<IW extends BcsType<any>>(options: DoVestOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::executable::Executable<${options.typeArguments[0]}>`,
+        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[0]}>`,
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[1]}>`,
         `${options.typeArguments[2]}`
     ] satisfies string[];
@@ -231,7 +231,7 @@ export interface DeleteVestOptions {
 export function deleteVest(options: DeleteVestOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xdbf6eb7acfe83ce0f26fd884ea77b1358395e85dac4c47effd4c50be4d810afc::intents::Expired'
+        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({

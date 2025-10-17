@@ -24,7 +24,7 @@ export function burnCoins(
     coin: TransactionArgument,
 ) {
     // caller should check if TreasuryCap exist and can_burn is enabled
-        publicBurn({
+    publicBurn({
         typeArguments: [configType, coinType],
         arguments: { account, coin },
     });

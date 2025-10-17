@@ -18,7 +18,6 @@ export const WithdrawObjectAction = new MoveStruct({ name: `${$moduleName}::With
         object_id: bcs.Address
     } });
 export const WithdrawCoinAction = new MoveStruct({ name: `${$moduleName}::WithdrawCoinAction`, fields: {
-        coin_type: bcs.string(),
         coin_amount: bcs.u64()
     } });
 export interface NewWithdrawObjectArguments<IW extends BcsType<any>> {
@@ -131,7 +130,6 @@ export function deleteWithdrawObject(options: DeleteWithdrawObjectOptions) {
 export interface NewWithdrawCoinArguments<IW extends BcsType<any>> {
     intent: RawTransactionArgument<string>;
     account: RawTransactionArgument<string>;
-    coinType: RawTransactionArgument<string>;
     coinAmount: RawTransactionArgument<number | bigint>;
     intentWitness: RawTransactionArgument<IW>;
 }
@@ -140,11 +138,11 @@ export interface NewWithdrawCoinOptions<IW extends BcsType<any>> {
     arguments: NewWithdrawCoinArguments<IW> | [
         intent: RawTransactionArgument<string>,
         account: RawTransactionArgument<string>,
-        coinType: RawTransactionArgument<string>,
         coinAmount: RawTransactionArgument<number | bigint>,
         intentWitness: RawTransactionArgument<IW>
     ];
     typeArguments: [
+        string,
         string,
         string,
         string
@@ -156,11 +154,10 @@ export function newWithdrawCoin<IW extends BcsType<any>>(options: NewWithdrawCoi
     const argumentsTypes = [
         `${packageAddress}::intents::Intent<${options.typeArguments[1]}>`,
         `${packageAddress}::account::Account<${options.typeArguments[0]}>`,
-        '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u64',
-        `${options.typeArguments[2]}`
+        `${options.typeArguments[3]}`
     ] satisfies string[];
-    const parameterNames = ["intent", "account", "coinType", "coinAmount", "intentWitness"];
+    const parameterNames = ["intent", "account", "coinAmount", "intentWitness"];
     return (tx: Transaction) => tx.moveCall({
         package: packageAddress,
         module: 'owned',
@@ -219,6 +216,7 @@ export interface DeleteWithdrawCoinOptions {
         account: RawTransactionArgument<string>
     ];
     typeArguments: [
+        string,
         string
     ];
 }

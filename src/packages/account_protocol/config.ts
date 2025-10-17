@@ -94,7 +94,7 @@ export function updateExtensionsToLatest(options: UpdateExtensionsToLatestOption
     const argumentsTypes = [
         `${packageAddress}::account::Auth`,
         `${packageAddress}::account::Account<${options.typeArguments[0]}>`,
-        '0x1ac1e0ddfc88c189c78a6001a77c80f36a820335448bc110f2885f809e91cb62::extensions::Extensions'
+        '0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242::extensions::Extensions'
     ] satisfies string[];
     const parameterNames = ["auth", "account", "extensions"];
     return (tx: Transaction) => tx.moveCall({
@@ -140,7 +140,7 @@ export function requestConfigDeps<Outcome extends BcsType<any>>(options: Request
         `${packageAddress}::account::Account<${options.typeArguments[0]}>`,
         `${packageAddress}::intents::Params`,
         `${options.typeArguments[1]}`,
-        '0x1ac1e0ddfc88c189c78a6001a77c80f36a820335448bc110f2885f809e91cb62::extensions::Extensions',
+        '0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242::extensions::Extensions',
         'vector<0x0000000000000000000000000000000000000000000000000000000000000001::string::String>',
         'vector<address>',
         'vector<u64>'

@@ -1,13 +1,12 @@
-import { Transaction, TransactionObjectInput, TransactionResult } from "@mysten/sui/transactions";
-import * as accountProtocol from "../../../.gen/account-protocol/account/functions";
-import * as intents from "../../../.gen/account-protocol/intents/functions";
-import * as upgradePolicies from "../../../.gen/account-actions/package-upgrade/functions";
-import * as upgradePoliciesIntents from "../../../.gen/account-actions/package-upgrade-intents/functions";
-import { RestrictAction, UpgradeAction } from "../../../.gen/account-actions/package-upgrade/structs";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import * as accountProtocol from "../../../packages/account_protocol/account";
+import * as intents from "../../../packages/account_protocol/intents";
+import * as upgradePolicies from "../../../packages/account_actions/package_upgrade";
+import * as upgradePoliciesIntents from "../../../packages/account_actions/package_upgrade_intents";
+import { RestrictAction, UpgradeAction } from "../../../packages/account_actions/package_upgrade";
 
 import { ActionsIntentTypes, RestrictPolicyArgs, UpgradePackageArgs } from "../types";
 import { Intent } from "../intent";
-import { CLOCK } from "../../../types";
 
 export class UpgradePackageIntent extends Intent {
     static type = ActionsIntentTypes.UpgradePackage;
@@ -15,7 +14,7 @@ export class UpgradePackageIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const upgradeAction = UpgradeAction.fromFieldsWithTypes(actions[0]);
+        const upgradeAction = UpgradeAction.fromBase64(actions[0]);
 
         this.args = {
             packageName: upgradeAction.name,
@@ -24,18 +23,16 @@ export class UpgradePackageIntent extends Intent {
     }
 
     request(
-        tx: Transaction,
         accountGenerics: [string, string],
-        auth: TransactionObjectInput,
+        auth: TransactionArgument,
         account: string,
-        params: TransactionObjectInput,
-        outcome: TransactionObjectInput,
+        params: TransactionArgument,
+        outcome: TransactionArgument,
         actionArgs: UpgradePackageArgs,
     ) {
-        upgradePoliciesIntents.requestUpgradePackage(
-            tx,
-            accountGenerics,
-            {
+        upgradePoliciesIntents.requestUpgradePackage({
+            typeArguments: accountGenerics,
+            arguments: {
                 auth,
                 account,
                 params,
@@ -43,95 +40,67 @@ export class UpgradePackageIntent extends Intent {
                 packageName: actionArgs.packageName,
                 digest: actionArgs.digest,
             }
-        );
+        });
     }
 
     execute(
-        tx: Transaction,
         accountGenerics: [string, string],
-        executable: TransactionObjectInput,
-    ): TransactionResult { // Ticket
-        return upgradePoliciesIntents.executeUpgradePackage(
-            tx,
-            accountGenerics,
-            {
+        executable: TransactionArgument,
+    ) {
+        return upgradePoliciesIntents.executeUpgradePackage({
+            typeArguments: accountGenerics,
+            arguments: {
                 executable,
                 account: this.account,
-                clock: CLOCK
             }
-        );
+        });
     }
 
     commit(
-        tx: Transaction,
         accountGenerics: [string, string],
-        executable: TransactionObjectInput,
-        receipt: TransactionObjectInput,
+        executable: TransactionArgument,
+        receipt: TransactionArgument,
     ) {
-        upgradePoliciesIntents.executeCommitUpgrade(
-            tx,
-            accountGenerics,
-            {
+        upgradePoliciesIntents.executeCommitUpgrade({
+            typeArguments: accountGenerics,
+            arguments: {
                 executable,
                 account: this.account,
                 receipt,
             }
-        );
+        });
     }
 
     clearEmpty(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.destroyEmptyIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
             }
-        );
-        upgradePolicies.deleteUpgrade(
-            tx,
-            expired
-        );
-        upgradePolicies.deleteCommit(
-            tx,
-            expired
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        upgradePolicies.deleteUpgrade(expired);
+        upgradePolicies.deleteCommit(expired);
+        intents.destroyEmptyExpired(expired);
     }
 
     deleteExpired(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.deleteExpiredIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
-                clock: CLOCK,
             }
-        );
-        upgradePolicies.deleteUpgrade(
-            tx,
-            expired
-        );
-        upgradePolicies.deleteCommit(
-            tx,
-            expired
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        upgradePolicies.deleteUpgrade(expired);
+        upgradePolicies.deleteCommit(expired);
+        intents.destroyEmptyExpired(expired);
     }
 }
 
@@ -141,7 +110,7 @@ export class RestrictPolicyIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const restrictAction = RestrictAction.fromFieldsWithTypes(actions[0]);
+        const restrictAction = RestrictAction.fromBase64(actions[0]);
 
         if (restrictAction.policy !== 0 && restrictAction.policy !== 128 && restrictAction.policy !== 192 && restrictAction.policy !== 255) {
             throw new Error("Invalid policy");
@@ -154,18 +123,16 @@ export class RestrictPolicyIntent extends Intent {
     }
 
     request(
-        tx: Transaction,
         accountGenerics: [string, string],
-        auth: TransactionObjectInput,
+        auth: TransactionArgument,
         account: string,
-        params: TransactionObjectInput,
-        outcome: TransactionObjectInput,
+        params: TransactionArgument,
+        outcome: TransactionArgument,
         actionArgs: RestrictPolicyArgs,
     ) {
-        upgradePoliciesIntents.requestRestrictPolicy(
-            tx,
-            accountGenerics,
-            {
+        upgradePoliciesIntents.requestRestrictPolicy({
+            typeArguments: accountGenerics,
+            arguments: {
                 auth,
                 account,
                 params,
@@ -173,68 +140,49 @@ export class RestrictPolicyIntent extends Intent {
                 packageName: actionArgs.packageName,
                 policy: actionArgs.policy,
             }
-        );
+        });
     }
 
     execute(
-        tx: Transaction,
         accountGenerics: [string, string],
-        executable: TransactionObjectInput,
+        executable: TransactionArgument,
     ) {
-        upgradePoliciesIntents.executeRestrictPolicy(
-            tx,
-            accountGenerics,
-            {
+        upgradePoliciesIntents.executeRestrictPolicy({
+            typeArguments: accountGenerics,
+            arguments: {
                 executable,
                 account: this.account,
             }
-        );
+        });
     }
 
     clearEmpty(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.destroyEmptyIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
             }
-        );
-        upgradePolicies.deleteRestrict(
-            tx,
-            expired
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        upgradePolicies.deleteRestrict(expired);
+        intents.destroyEmptyExpired(expired);
     }
 
     deleteExpired(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.deleteExpiredIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
-                clock: CLOCK,
             }
-        );
-        upgradePolicies.deleteRestrict(
-            tx,
-            expired
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        upgradePolicies.deleteRestrict(expired);
+        intents.destroyEmptyExpired(expired);
     }
 }

@@ -1,88 +1,72 @@
-import { Transaction, TransactionObjectInput } from "@mysten/sui/transactions";
-import * as accountProtocol from "../../../.gen/account-protocol/account/functions";
-import * as intents from "../../../.gen/account-protocol/intents/functions";
-import * as emptyIntent from "../../../.gen/account-actions/empty-intents/functions";
+import { TransactionArgument } from "@mysten/sui/transactions";
+import * as accountProtocol from "../../../packages/account_protocol/account";
+import * as intents from "../../../packages/account_protocol/intents";
+import * as emptyIntent from "../../../packages/account_actions/empty_intents";
 
 import { ActionsIntentTypes } from "../types";
 import { Intent } from "../intent";
-import { CLOCK } from "../../../types";
 
 export class EmptyIntent extends Intent {
     static type = ActionsIntentTypes.Empty;
 
-    async init() {}
+    async init() { }
 
     request(
-        tx: Transaction,
         accountGenerics: [string, string],
-        auth: TransactionObjectInput,
+        auth: TransactionArgument,
         account: string,
-        params: TransactionObjectInput,
-        outcome: TransactionObjectInput,
+        params: TransactionArgument,
+        outcome: TransactionArgument,
     ) {
-        emptyIntent.requestEmpty(
-            tx,
-            [...accountGenerics],
-            {
+        emptyIntent.requestEmpty({
+            typeArguments: [...accountGenerics],
+            arguments: {
                 auth,
                 account,
                 params,
                 outcome,
             }
-        );
+        });
     }
 
     execute(
-        tx: Transaction,
         accountGenerics: [string, string],
-        executable: TransactionObjectInput,
+        executable: TransactionArgument,
     ) {
-        emptyIntent.executeEmpty(
-            tx,
-            [...accountGenerics],
-            {
+        emptyIntent.executeEmpty({
+            typeArguments: [...accountGenerics],
+            arguments: {
                 executable,
                 account: this.account,
             }
-        );
+        });
     }
 
     clearEmpty(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.destroyEmptyIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
             }
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        intents.destroyEmptyExpired(expired);
     }
 
     deleteExpired(
-        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent(
-            tx,
-            accountGenerics,
-            {
+        const expired = accountProtocol.deleteExpiredIntent({
+            typeArguments: accountGenerics,
+            arguments: {
                 account: this.account,
                 key,
-                clock: CLOCK,
             }
-        );
-        intents.destroyEmptyExpired(
-            tx,
-            expired,
-        );
+        });
+        intents.destroyEmptyExpired(expired);
     }
 }

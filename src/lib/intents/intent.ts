@@ -1,41 +1,36 @@
-import { Transaction, TransactionObjectInput, TransactionResult } from "@mysten/sui/transactions";
+import { TransactionArgument } from "@mysten/sui/transactions";
 import { DynamicFieldInfo, SuiClient } from "@mysten/sui/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
 
-import { newParams, newParamsWithRandKey } from "../../.gen/account-protocol/intents/functions";
-import { confirmExecution } from "../../.gen/account-protocol/account/functions";
+import { newParams, newParamsWithRandKey } from "../../packages/account_protocol/intents";
+import { confirmExecution } from "../../packages/account_protocol/account";
 import { ActionsArgs, IntentArgs, IntentFields } from "./types";
 import { Outcome } from "./outcome";
-import { CLOCK } from "../../types/constants";
 
 export interface Intent {
     init(): Promise<void>;
 
     request(
-        tx: Transaction, 
         accountGenerics: [string, string] | null, 
-        auth: TransactionObjectInput | null,  
+        auth: TransactionArgument | null,  
         account: string, 
-        params: TransactionObjectInput, 
-        outcome: TransactionObjectInput, 
+        params: TransactionArgument, 
+        outcome: TransactionArgument, 
         actionArgs: ActionsArgs
     ): void;
     
     execute(
-        tx: Transaction, 
         accountGenerics: [string, string] | null, 
-        executable: TransactionObjectInput, 
+        executable: TransactionArgument, 
         ...args: any[]
-    ): TransactionResult | void;
+    ): void;
     
     clearEmpty(
-        tx: Transaction, 
         accountGenerics: [string, string], 
         key: string
     ): void;
     
     deleteExpired(
-        tx: Transaction, 
         accountGenerics: [string, string], 
         key: string
     ): void;
@@ -52,27 +47,28 @@ export class Intent {
         public fields: IntentFields,
     ) { }
 
-    static createParams(tx: Transaction, intentArgs: IntentArgs): TransactionResult {
-        return newParams(tx, { 
+    static createParams(intentArgs: IntentArgs) {
+        newParams({ arguments: { 
             key: intentArgs.key, 
             description: intentArgs.description ?? "",
             executionTimes: intentArgs.executionTimes ?? [0n],
             expirationTime: intentArgs.expirationTime ?? BigInt(Math.floor(Date.now()) + 7 * 24 * 60 * 60 * 1000),
-            clock: CLOCK 
-        });
+        }});
     }
 
-    static createParamsWithRandKey(tx: Transaction, intentArgs: Pick<IntentArgs, "description" | "executionTimes" | "expirationTime">): TransactionResult {
-        return newParamsWithRandKey(tx, { 
+    static createParamsWithRandKey(intentArgs: Pick<IntentArgs, "description" | "executionTimes" | "expirationTime">) {
+        newParamsWithRandKey({ arguments: { 
             description: intentArgs.description ?? "",
             executionTimes: intentArgs.executionTimes ?? [0n],
             expirationTime: intentArgs.expirationTime ?? BigInt(Math.floor(Date.now()) + 7 * 24 * 60 * 60 * 1000),
-            clock: CLOCK 
-        });
+        }});
     }
 
-    completeExecution(tx: Transaction, accountGenerics: [string, string], executable: TransactionObjectInput) {
-        confirmExecution(tx, accountGenerics, { account: this.account!, executable });
+    completeExecution(accountGenerics: [string, string], executable: TransactionArgument) {
+        confirmExecution({
+            typeArguments: accountGenerics, 
+            arguments: { account: this.account!, executable }
+        });
     }
 
     async fetchActions(parentId: string): Promise<any[]> {

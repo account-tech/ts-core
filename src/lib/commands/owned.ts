@@ -10,7 +10,7 @@ export function mergeAndSplitCoins(
     toMerge: string[],
     toSplit: bigint[],
 ) {
-    return mergeAndSplit({
+    mergeAndSplit({
         typeArguments: [configType, coinType],
         arguments: { auth, account, toMerge, toSplit },
     });
