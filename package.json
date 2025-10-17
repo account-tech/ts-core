@@ -60,7 +60,7 @@
     "@mysten/codegen": "^0.5.5",
     "@mysten/kiosk": "^0.13.6",
     "@mysten/sui": "^1.42.0",
-    "@mysten/suins": "^0.7.36",
+    "@mysten/suins": "^0.9.5",
     "@polymedia/coinmeta": "^0.0.24",
     "bun-types": "^1.3.0"
   },

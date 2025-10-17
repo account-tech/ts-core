@@ -1,13 +1,13 @@
-import { Transaction, TransactionObjectInput, TransactionResult } from "@mysten/sui/transactions";
 import { SuiClient, SuiMoveObject, SuiObjectResponse } from "@mysten/sui/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
 import { SuinsClient } from '@mysten/suins';
 
-import { User as UserRaw, Invite as InviteRaw } from "../../.gen/account-protocol/user/structs";
-import { acceptInvite, refuseInvite, reorderAccounts } from "../../.gen/account-protocol/user/functions";
-import { new_, transfer, destroy } from "../../.gen/account-protocol/user/functions";
+import { User as UserRaw, Invite as InviteRaw } from "../../packages/account_protocol/user";
+import { acceptInvite, refuseInvite, reorderAccounts } from "../../packages/account_protocol/user";
+import { _new, transfer, destroy } from "../../packages/account_protocol/user";
 import { USER_REGISTRY, ACCOUNT_PROTOCOL } from "../../types/constants";
 import { UserData, Invite, Profile } from "./types";
+import { RawTransactionArgument } from "src/packages/utils";
 
 export class User implements UserData {
 	id: string = "";
@@ -41,9 +41,12 @@ export class User implements UserData {
 		const { data: userData } = await this.client.getOwnedObjects({
 			owner,
 			filter: { StructType: `${ACCOUNT_PROTOCOL.V1}::user::User` },
-			options: { showContent: true }
+			options: { showContent: true, showBcs: true }
 		});
-		const userRaw = userData.length !== 0 ? UserRaw.fromSuiParsedData(userData[0].data?.content!) : null;
+		if (userData[0].data?.bcs?.dataType !== 'moveObject') {
+			throw new Error('Expected a move object')
+		}
+		const userRaw = userData.length !== 0 ? UserRaw.fromBase64(userData[0].data?.bcs?.bcsBytes) : null;
 
 		const profile = await this.fetchProfile(owner);
 
@@ -51,7 +54,7 @@ export class User implements UserData {
 		const invites = await this.fetchInvites(owner);
 
 		return {
-			id: userRaw?.id ?? "",
+			id: userRaw?.id.id ?? "",
 			profile,
 			accountIds,
 			invites,
@@ -92,16 +95,16 @@ export class User implements UserData {
 		const { data: inviteData } = await this.client.getOwnedObjects({
 			owner,
 			filter: { StructType: `${ACCOUNT_PROTOCOL.V1}::user::Invite` },
-			options: { showContent: true }
+			options: { showContent: true, showBcs: true }
 		});
 		if (inviteData.length === 0) return [];
 
 		const invitesParsed = inviteData
-			.map(invite => InviteRaw.fromSuiParsedData(invite.data?.content!))
-			.filter(invite => normalizeStructTag(invite.accountType) === this.accountType);
+			.map(invite => InviteRaw.fromBase64((invite.data?.bcs as any).bcsBytes))
+			.filter(invite => normalizeStructTag(invite.account_type) === this.accountType);
 
 		// Get all account addresses from invites
-		const accountAddrs = invitesParsed.map(invite => invite.accountAddr);
+		const accountAddrs = invitesParsed.map(invite => invite.account_addr);
 
 		// Fetch all account objects in one batch
 		// Process in batches of 50 due to API limitations
@@ -131,9 +134,9 @@ export class User implements UserData {
 		const invites = invitesParsed
 			.map(invite => {
 				return {
-					id: invite.id,
-					accountAddr: invite.accountAddr,
-					accountName: accountNames.get(invite.accountAddr) ?? invite.accountAddr
+					id: invite.id.id,
+					accountAddr: invite.account_addr,
+					accountName: accountNames.get(invite.account_addr) ?? invite.account_addr
 				};
 			})
 			.sort((a, b) => a.accountName.localeCompare(b.accountName));
@@ -162,7 +165,7 @@ export class User implements UserData {
 	}
 
 	// returns an account object that can be used in the ptb before being transferred
-	createUser(tx: Transaction, username?: string, avatar?: string): TransactionResult {
+	createUser(username?: string, avatar?: string) {
 		// TODO: uncomment for mainnet
 		// if (username && this.profile.username.slice(6, 9) === "...") {
 		// 	const suinsClient = new SuinsClient({ client: this.client, network: 'mainnet' });
@@ -188,27 +191,30 @@ export class User implements UserData {
 		// 	tx.transferObjects([subNameNft], tx.pure.address(this.address!));
 		// }
 
-		return new_(tx);
+		_new();
 	}
 
-	transferUser(tx: Transaction, user: TransactionObjectInput, recipient: string) {
-		transfer(tx, { registry: USER_REGISTRY, user, recipient });
+	transferUser(user: RawTransactionArgument<string>, recipient: string) {
+		transfer({arguments: { registry: USER_REGISTRY, user, recipient }});
 	}
 
-	deleteUser(tx: Transaction, user: TransactionObjectInput) {
-		destroy(tx, { registry: USER_REGISTRY, user });
+	deleteUser(user: RawTransactionArgument<string>) {
+		destroy({arguments: { registry: USER_REGISTRY, user }});
 	}
 
-	acceptInvite(tx: Transaction, user: TransactionObjectInput, invite: TransactionObjectInput) {
-		acceptInvite(tx, { user, invite });
+	acceptInvite(user: RawTransactionArgument<string>, invite: RawTransactionArgument<string>) {
+		acceptInvite({arguments: { user, invite }});
 	}
 
-	refuseInvite(tx: Transaction, invite: TransactionObjectInput) {
-		refuseInvite(tx, invite);
+	refuseInvite(invite: RawTransactionArgument<string>) {
+		refuseInvite({arguments: { invite }});
 	}
 
-	reorderAccounts(tx: Transaction, user: TransactionObjectInput, accountType: string, accountAddrs: string[]) {
-		reorderAccounts(tx, accountType, { user, addrs: accountAddrs });
+	reorderAccounts(user: RawTransactionArgument<string>, accountType: string, accountAddrs: string[]) {
+		reorderAccounts({
+			typeArguments: [accountType], 
+			arguments: { user, addrs: accountAddrs }
+		});
 	}
 }
 
