@@ -1,4 +1,4 @@
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as vault from "../../../packages/account_actions/vault";
@@ -31,6 +31,7 @@ export class SpendAndTransferIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -38,75 +39,108 @@ export class SpendAndTransferIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: SpendAndTransferArgs,
     ) {
-        vaultIntents.requestSpendAndTransfer({
-            typeArguments: [...accountGenerics, actionArgs.coinType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                vaultName: actionArgs.vaultName,
-                amounts: actionArgs.transfers.map(transfer => transfer.amount),
-                recipients: actionArgs.transfers.map(transfer => transfer.recipient),
-            }
-        });
+        tx.add(
+            vaultIntents.requestSpendAndTransfer({
+                typeArguments: [...accountGenerics, actionArgs.coinType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    vaultName: actionArgs.vaultName,
+                    amounts: actionArgs.transfers.map(transfer => transfer.amount),
+                    recipients: actionArgs.transfers.map(transfer => transfer.recipient),
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
+    ): TransactionResult {
+        let result;
         for (let i = 0; i < this.args!.transfers.length; i++) {
-            vaultIntents.executeSpendAndTransfer({
-                typeArguments: [...accountGenerics, this.args!.coinType],
-                arguments: {
-                    executable,
-                    account: this.account,
-                }
-            });
+            result = tx.add(
+                vaultIntents.executeSpendAndTransfer({
+                    typeArguments: [...accountGenerics, this.args!.coinType],
+                    arguments: {
+                        executable,
+                        account: this.account,
+                    }
+                })
+            );
         }
+        return result!;
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         for (let i = 0; i < this.args!.transfers.length; i++) {
-            vault.deleteSpend({
-                typeArguments: [this.args!.coinType],
-                arguments: { expired }
-            });
-            transfer.deleteTransfer(expired);
+            tx.add(
+                vault.deleteSpend({
+                    typeArguments: [this.args!.coinType],
+                    arguments: { expired }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         }
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         this.args.transfers.forEach(_ => {
-            vault.deleteSpend({
-                typeArguments: [this.args!.coinType],
-                arguments: { expired }
-            });
-            transfer.deleteTransfer(expired);
+            tx.add(
+                vault.deleteSpend({
+                    typeArguments: [this.args!.coinType],
+                    arguments: { expired }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -132,6 +166,7 @@ export class SpendAndVestIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -139,70 +174,101 @@ export class SpendAndVestIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: SpendAndVestArgs,
     ) {
-        vaultIntents.requestSpendAndVest({
-            typeArguments: [...accountGenerics, actionArgs.coinType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                vaultName: actionArgs.vaultName,
-                coinAmount: actionArgs.amount,
-                startTimestamp: actionArgs.start,
-                endTimestamp: actionArgs.end,
-                recipient: actionArgs.recipient,
-            }
-        });
+        tx.add(
+            vaultIntents.requestSpendAndVest({
+                typeArguments: [...accountGenerics, actionArgs.coinType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    vaultName: actionArgs.vaultName,
+                    coinAmount: actionArgs.amount,
+                    startTimestamp: actionArgs.start,
+                    endTimestamp: actionArgs.end,
+                    recipient: actionArgs.recipient,
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
-        vaultIntents.executeSpendAndVest({
-            typeArguments: [...accountGenerics, this.args!.coinType],
-            arguments: {
-                executable,
-                account: this.account,
-            }
-        });
+    ): TransactionResult {
+        return tx.add(
+            vaultIntents.executeSpendAndVest({
+                typeArguments: [...accountGenerics, this.args!.coinType],
+                arguments: {
+                    executable,
+                    account: this.account,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        vault.deleteSpend({
-            typeArguments: [this.args!.coinType],
-            arguments: { expired }
-        });
-        vesting.deleteVest(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            vault.deleteSpend({
+                typeArguments: [this.args!.coinType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            vesting.deleteVest({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        vault.deleteSpend({
-            typeArguments: [this.args!.coinType],
-            arguments: { expired }
-        });
-        vesting.deleteVest(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            vault.deleteSpend({
+                typeArguments: [this.args!.coinType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            vesting.deleteVest({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }

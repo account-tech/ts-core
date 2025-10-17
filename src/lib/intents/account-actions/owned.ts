@@ -1,4 +1,4 @@
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as owned from "../../../packages/account_protocol/owned";
@@ -32,6 +32,7 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -39,17 +40,19 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: WithdrawAndTransferToVaultArgs,
     ) {
-        ownedIntents.requestWithdrawAndTransferToVault({
-            typeArguments: [...accountGenerics, actionArgs.coinType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                coinAmount: actionArgs.coinAmount,
-                vaultName: actionArgs.vaultName,
-            }
-        });
+        tx.add(
+            ownedIntents.requestWithdrawAndTransferToVault({
+                typeArguments: [...accountGenerics, actionArgs.coinType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    coinAmount: actionArgs.coinAmount,
+                    vaultName: actionArgs.vaultName,
+                }
+            })
+        );
     }
 
     setCoinId(coinId: string) {
@@ -57,70 +60,95 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
+    ): TransactionResult {
         if (!this.coinId) {
             throw new Error("Coin ID not initialized");
         }
-        ownedIntents.executeWithdrawAndTransferToVault({
-            typeArguments: [...accountGenerics, this.args!.coinType],
-            arguments: {
-                executable,
-                account: this.account,
-                receiving: this.coinId as string,
-            }
-        });
+        return tx.add(
+            ownedIntents.executeWithdrawAndTransferToVault({
+                typeArguments: [...accountGenerics, this.args!.coinType],
+                arguments: {
+                    executable,
+                    account: this.account,
+                    receiving: this.coinId as string,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        owned.deleteWithdrawCoin({
-            typeArguments: [accountGenerics[0], this.args!.coinType],
-            arguments: {
-                expired,
-                account: this.account,
-            }
-        });
-        vault.deleteDeposit({
-            typeArguments: [this.args!.coinType],
-            arguments: { expired }
-        });
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            owned.deleteWithdrawCoin({
+                typeArguments: [accountGenerics[0], this.args!.coinType],
+                arguments: {
+                    expired,
+                    account: this.account,
+                }
+            })
+        );
+        tx.add(
+            vault.deleteDeposit({
+                typeArguments: [this.args!.coinType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        owned.deleteWithdrawCoin({
-            typeArguments: [accountGenerics[0], this.args!.coinType],
-            arguments: {
-                expired,
-                account: this.account,
-            }
-        });
-        vault.deleteDeposit({
-            typeArguments: [this.args!.coinType],
-            arguments: { expired }
-        });
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            owned.deleteWithdrawCoin({
+                typeArguments: [accountGenerics[0], this.args!.coinType],
+                arguments: {
+                    expired,
+                    account: this.account,
+                }
+            })
+        );
+        tx.add(
+            vault.deleteDeposit({
+                typeArguments: [this.args!.coinType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -147,6 +175,7 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -154,89 +183,122 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: WithdrawObjectsAndTransferArgs,
     ) {
-        ownedIntents.requestWithdrawObjectsAndTransfer({
-            typeArguments: accountGenerics,
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                objectIds: actionArgs.transfers.map(transfer => transfer.objectId),
-                recipients: actionArgs.transfers.map(transfer => transfer.recipient),
-            }
-        });
+        tx.add(
+            ownedIntents.requestWithdrawObjectsAndTransfer({
+                typeArguments: accountGenerics,
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    objectIds: actionArgs.transfers.map(transfer => transfer.objectId),
+                    recipients: actionArgs.transfers.map(transfer => transfer.recipient),
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
+    ): TransactionResult {
         if (this.typeById.size === 0) {
             throw new Error("Type by ID not initialized");
         }
 
+        let result;
         for (let i = 0; i < this.args!.transfers.length; i++) {
             const objectType = this.typeById.get(this.args!.transfers[i].objectId as string);
             if (!objectType) {
                 throw new Error("Object type not found");
             }
-            ownedIntents.executeWithdrawObjectAndTransfer({
-                typeArguments: [...accountGenerics, objectType],
-                arguments: {
-                    executable,
-                    account: this.account,
-                    receiving: this.args!.transfers[i].objectId as string,
-                }
-            });
+            result = tx.add(
+                ownedIntents.executeWithdrawObjectAndTransfer({
+                    typeArguments: [...accountGenerics, objectType],
+                    arguments: {
+                        executable,
+                        account: this.account,
+                        receiving: this.args!.transfers[i].objectId as string,
+                    }
+                })
+            );
         }
+        return result!;
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        for (let i = 0; i < this.args!.transfers.length; i++) {
-            owned.deleteWithdrawObject({
-                typeArguments: [accountGenerics[0]],
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
                 arguments: {
-                    expired,
                     account: this.account,
+                    key,
                 }
-            });
-            transfer.deleteTransfer(expired);
+            })
+        );
+        for (let i = 0; i < this.args!.transfers.length; i++) {
+            tx.add(
+                owned.deleteWithdrawObject({
+                    typeArguments: [accountGenerics[0]],
+                    arguments: {
+                        expired,
+                        account: this.account,
+                    }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         }
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        this.args.transfers.forEach(_ => {
-            owned.deleteWithdrawObject({
-                typeArguments: [accountGenerics[0]],
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
                 arguments: {
-                    expired,
                     account: this.account,
+                    key,
                 }
-            });
-            transfer.deleteTransfer(expired);
+            })
+        );
+        this.args.transfers.forEach(_ => {
+            tx.add(
+                owned.deleteWithdrawObject({
+                    typeArguments: [accountGenerics[0]],
+                    arguments: {
+                        expired,
+                        account: this.account,
+                    }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -259,6 +321,7 @@ export class WithdrawCoinAndTransferIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -266,17 +329,19 @@ export class WithdrawCoinAndTransferIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: WithdrawCoinAndTransferArgs,
     ) {
-        ownedIntents.requestWithdrawCoinAndTransfer({
-            typeArguments: [...accountGenerics, actionArgs.coinType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                coinAmounts: actionArgs.transfers.map(transfer => transfer.amount),
-                recipients: actionArgs.transfers.map(transfer => transfer.recipient),
-            }
-        });
+        tx.add(
+            ownedIntents.requestWithdrawCoinAndTransfer({
+                typeArguments: [...accountGenerics, actionArgs.coinType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    coinAmounts: actionArgs.transfers.map(transfer => transfer.amount),
+                    recipients: actionArgs.transfers.map(transfer => transfer.recipient),
+                }
+            })
+        );
     }
 
     setCoinIds(coinIds: string[]) {
@@ -284,70 +349,101 @@ export class WithdrawCoinAndTransferIntent extends Intent {
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
+    ): TransactionResult {
         if (!this.coinIds) {
             throw new Error("Coin IDs not initialized");
         }
+        let result;
         for (let i = 0; i < this.args!.transfers.length; i++) {
-            ownedIntents.executeWithdrawCoinAndTransfer({
-                typeArguments: [...accountGenerics, this.args!.coinType],
-                arguments: {
-                    executable,
-                    account: this.account,
-                    receiving: this.coinIds![i],
-                }
-            });
+            result = tx.add(
+                ownedIntents.executeWithdrawCoinAndTransfer({
+                    typeArguments: [...accountGenerics, this.args!.coinType],
+                    arguments: {
+                        executable,
+                        account: this.account,
+                        receiving: this.coinIds![i],
+                    }
+                })
+            );
         }
+        return result!;
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        for (let i = 0; i < this.args!.transfers.length; i++) {
-            owned.deleteWithdrawCoin({
-                typeArguments: [accountGenerics[0], this.args!.coinType],
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
                 arguments: {
-                    expired,
                     account: this.account,
+                    key,
                 }
-            });
-            transfer.deleteTransfer(expired);
+            })
+        );
+        for (let i = 0; i < this.args!.transfers.length; i++) {
+            tx.add(
+                owned.deleteWithdrawCoin({
+                    typeArguments: [accountGenerics[0], this.args!.coinType],
+                    arguments: {
+                        expired,
+                        account: this.account,
+                    }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         }
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        this.args.transfers.forEach(_ => {
-            owned.deleteWithdrawCoin({
-                typeArguments: [accountGenerics[0], this.args!.coinType],
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
                 arguments: {
-                    expired,
                     account: this.account,
+                    key,
                 }
-            });
-            transfer.deleteTransfer(expired);
+            })
+        );
+        this.args.transfers.forEach(_ => {
+            tx.add(
+                owned.deleteWithdrawCoin({
+                    typeArguments: [accountGenerics[0], this.args!.coinType],
+                    arguments: {
+                        expired,
+                        account: this.account,
+                    }
+                })
+            );
+            tx.add(
+                transfer.deleteTransfer({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -370,6 +466,7 @@ export class WithdrawAndVestIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -377,80 +474,111 @@ export class WithdrawAndVestIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: WithdrawAndVestArgs,
     ) {
-        ownedIntents.requestWithdrawAndVest({
-            typeArguments: [...accountGenerics, actionArgs.coinType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                coinAmount: actionArgs.coinAmount,
-                startTimestamp: actionArgs.start,
-                endTimestamp: actionArgs.end,
-                recipient: actionArgs.recipient,
-            }
-        });
+        tx.add(
+            ownedIntents.requestWithdrawAndVest({
+                typeArguments: [...accountGenerics, actionArgs.coinType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    coinAmount: actionArgs.coinAmount,
+                    startTimestamp: actionArgs.start,
+                    endTimestamp: actionArgs.end,
+                    recipient: actionArgs.recipient,
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
+    ): TransactionResult {
         if (!this.coinId) {
             throw new Error("Coin ID not initialized");
         }
 
-        ownedIntents.executeWithdrawAndVest({
-            typeArguments: [...accountGenerics, this.args!.coinType],
-            arguments: {
-                executable,
-                account: this.account,
-                receiving: this.coinId as string,
-            }
-        });
+        return tx.add(
+            ownedIntents.executeWithdrawAndVest({
+                typeArguments: [...accountGenerics, this.args!.coinType],
+                arguments: {
+                    executable,
+                    account: this.account,
+                    receiving: this.coinId as string,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        owned.deleteWithdrawCoin({
-            typeArguments: [accountGenerics[0], this.args!.coinType],
-            arguments: {
-                expired,
-                account: this.account,
-            }
-        });
-        vesting.deleteVest(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            owned.deleteWithdrawCoin({
+                typeArguments: [accountGenerics[0], this.args!.coinType],
+                arguments: {
+                    expired,
+                    account: this.account,
+                }
+            })
+        );
+        tx.add(
+            vesting.deleteVest({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        owned.deleteWithdrawCoin({
-            typeArguments: [accountGenerics[0], this.args!.coinType],
-            arguments: {
-                expired,
-                account: this.account,
-            }
-        });
-        vesting.deleteVest(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            owned.deleteWithdrawCoin({
+                typeArguments: [accountGenerics[0], this.args!.coinType],
+                arguments: {
+                    expired,
+                    account: this.account,
+                }
+            })
+        );
+        tx.add(
+            vesting.deleteVest({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }

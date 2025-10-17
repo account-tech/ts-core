@@ -1,4 +1,4 @@
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import * as config from "../../../packages/account_protocol/config";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
@@ -26,6 +26,7 @@ export class ConfigDepsIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -42,62 +43,89 @@ export class ConfigDepsIntent extends Intent {
             versions.push(BigInt(dep.version));
         });
 
-        config.requestConfigDeps({
-            typeArguments: accountGenerics,
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                extensions: EXTENSIONS,
-                names,
-                addresses,
-                versions,
-            }
-        });
+        tx.add(
+            config.requestConfigDeps({
+                typeArguments: accountGenerics,
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    extensions: EXTENSIONS,
+                    names,
+                    addresses,
+                    versions,
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
-        config.executeConfigDeps({
-            typeArguments: accountGenerics,
-            arguments: {
-                executable,
-                account: this.account,
-            }
-        });
+    ): TransactionResult {
+        return tx.add(
+            config.executeConfigDeps({
+                typeArguments: accountGenerics,
+                arguments: {
+                    executable,
+                    account: this.account,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        config.deleteConfigDeps(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            config.deleteConfigDeps({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        config.deleteConfigDeps(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            config.deleteConfigDeps({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -113,6 +141,7 @@ export class ToggleUnverifiedAllowedIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -120,57 +149,84 @@ export class ToggleUnverifiedAllowedIntent extends Intent {
         outcome: TransactionArgument,
         _actionArgs: ToggleUnverifiedAllowedArgs,
     ) {
-        config.requestToggleUnverifiedAllowed({
-            typeArguments: accountGenerics,
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-            }
-        });
+        tx.add(
+            config.requestToggleUnverifiedAllowed({
+                typeArguments: accountGenerics,
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
-        config.executeToggleUnverifiedAllowed({
-            typeArguments: accountGenerics,
-            arguments: {
-                executable,
-                account: this.account,
-            }
-        });
+    ): TransactionResult {
+        return tx.add(
+            config.executeToggleUnverifiedAllowed({
+                typeArguments: accountGenerics,
+                arguments: {
+                    executable,
+                    account: this.account,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        config.deleteToggleUnverifiedAllowed(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            config.deleteToggleUnverifiedAllowed({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        config.deleteToggleUnverifiedAllowed(expired);
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            config.deleteToggleUnverifiedAllowed({
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }

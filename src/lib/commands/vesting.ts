@@ -1,6 +1,6 @@
 import { SuiClient } from "@mysten/sui/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import { claim as claimVesting, cancelPayment as cancelPaymentVesting, destroyEmpty as destroyEmptyVesting, destroyCap as destroyCapVesting } from "../../packages/account_actions/vesting";
 import { ACCOUNT_ACTIONS } from "../../types";
 
@@ -57,46 +57,58 @@ export async function getVestings(
 
 /// Claims the unlocked amount of a vesting
 export function claim(
+    tx: Transaction,
     coinType: string,
     vesting: TransactionArgument,
     cap: TransactionArgument,
-) {
-    claimVesting({
-        typeArguments: [coinType],
-        arguments: { vesting, cap },
-    });
+): TransactionResult {
+    return tx.add(
+        claimVesting({
+            typeArguments: [coinType],
+            arguments: { vesting, cap },
+        })
+    );
 }
 
 /// Cancels a vesting and sends back the coin to the account
 export function cancelPayment(
+    tx: Transaction,
     configType: string,
     coinType: string,
     auth: TransactionArgument,
     account: TransactionArgument,
     vesting: TransactionArgument,
 ) {
-    cancelPaymentVesting({
-        typeArguments: [configType, coinType],
-        arguments: { auth, vesting, account },
-    });
+    tx.add(
+        cancelPaymentVesting({
+            typeArguments: [configType, coinType],
+            arguments: { auth, vesting, account },
+        })
+    );
 }
 
 /// Destroys a Vesting object with empty balance
 export function destroyEmpty(
+    tx: Transaction,
     coinType: string,
     vesting: TransactionArgument,
 ) {
-    destroyEmptyVesting({
-        typeArguments: [coinType],
-        arguments: { vesting },
-    });
+    tx.add(
+        destroyEmptyVesting({
+            typeArguments: [coinType],
+            arguments: { vesting },
+        })
+    );
 }
 
 /// Destroys a ClaimCap
 export function destroyCap(
+    tx: Transaction,
     cap: TransactionArgument,
 ) {
-    destroyCapVesting({
-        arguments: { cap },
-    });
+    tx.add(
+        destroyCapVesting({
+            arguments: { cap },
+        })
+    );
 }

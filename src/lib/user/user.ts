@@ -1,4 +1,5 @@
 import { SuiClient, SuiMoveObject, SuiObjectResponse } from "@mysten/sui/client";
+import { Transaction, TransactionResult } from "@mysten/sui/transactions";
 import { normalizeStructTag } from "@mysten/sui/utils";
 import { SuinsClient } from '@mysten/suins';
 
@@ -165,7 +166,11 @@ export class User implements UserData {
 	}
 
 	// returns an account object that can be used in the ptb before being transferred
-	createUser(username?: string, avatar?: string) {
+	createUser(
+		tx: Transaction, 
+		username?: string, 
+		avatar?: string
+	): TransactionResult {
 		// TODO: uncomment for mainnet
 		// if (username && this.profile.username.slice(6, 9) === "...") {
 		// 	const suinsClient = new SuinsClient({ client: this.client, network: 'mainnet' });
@@ -191,30 +196,61 @@ export class User implements UserData {
 		// 	tx.transferObjects([subNameNft], tx.pure.address(this.address!));
 		// }
 
-		_new();
+		return tx.add(
+			_new()
+		);
 	}
 
-	transferUser(user: RawTransactionArgument<string>, recipient: string) {
-		transfer({arguments: { registry: USER_REGISTRY, user, recipient }});
+	transferUser(
+		tx: Transaction,
+		user: RawTransactionArgument<string>,
+		recipient: string
+	) {
+		return tx.add(
+			transfer({arguments: { registry: USER_REGISTRY, user, recipient }})
+		);
 	}
 
-	deleteUser(user: RawTransactionArgument<string>) {
-		destroy({arguments: { registry: USER_REGISTRY, user }});
+	deleteUser(
+		tx: Transaction,
+		user: RawTransactionArgument<string>
+	) {
+		return tx.add(
+			destroy({arguments: { registry: USER_REGISTRY, user }})
+		);
 	}
 
-	acceptInvite(user: RawTransactionArgument<string>, invite: RawTransactionArgument<string>) {
-		acceptInvite({arguments: { user, invite }});
+	acceptInvite(
+		tx: Transaction,
+		user: RawTransactionArgument<string>,
+		invite: RawTransactionArgument<string>
+	) {
+		return tx.add(
+			acceptInvite({arguments: { user, invite }})
+		);
 	}
 
-	refuseInvite(invite: RawTransactionArgument<string>) {
-		refuseInvite({arguments: { invite }});
+	refuseInvite(
+		tx: Transaction,
+		invite: RawTransactionArgument<string>
+	) {
+		return tx.add(
+			refuseInvite({arguments: { invite }})
+		);
 	}
 
-	reorderAccounts(user: RawTransactionArgument<string>, accountType: string, accountAddrs: string[]) {
-		reorderAccounts({
-			typeArguments: [accountType], 
-			arguments: { user, addrs: accountAddrs }
-		});
+	reorderAccounts(
+		tx: Transaction,
+		user: RawTransactionArgument<string>,
+		accountType: string,
+		accountAddrs: string[]
+	) {
+		return tx.add(
+			reorderAccounts({
+				typeArguments: [accountType],
+				arguments: { user, addrs: accountAddrs }
+			})
+		);
 	}
 }
 

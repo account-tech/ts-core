@@ -1,4 +1,4 @@
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as accessControlIntent from "../../../packages/account_actions/access_control_intents";
@@ -21,6 +21,7 @@ export class BorrowCapIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -28,94 +29,116 @@ export class BorrowCapIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: BorrowCapArgs,
     ) {
-        accessControlIntent.requestBorrowCap({
-            typeArguments: [...accountGenerics, actionArgs.capType],
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-            }
-        });
+        tx.add(
+            accessControlIntent.requestBorrowCap({
+                typeArguments: [...accountGenerics, actionArgs.capType],
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                }
+            })
+        );
     }
-
+    
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ) {
-        accessControlIntent.executeBorrowCap({
-            typeArguments: [...accountGenerics, this.args!.capType],
-            arguments: {
-                executable,
-                account: this.account,
-            }
-        });
+    ): TransactionResult {
+        return tx.add(
+            accessControlIntent.executeBorrowCap({
+                typeArguments: [...accountGenerics, this.args!.capType],
+                arguments: {
+                    executable,
+                    account: this.account,
+                }
+            })
+        );
     }
 
     return(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
         cap: TransactionArgument,
     ) {
-        accessControlIntent.executeReturnCap({
-            typeArguments: [...accountGenerics, this.args!.capType],
-            arguments: {
-                account: this.account,
-                executable,
-                cap,
-            }
-        });
+        tx.add(
+            accessControlIntent.executeReturnCap({
+                typeArguments: [...accountGenerics, this.args!.capType],
+                arguments: {
+                    account: this.account,
+                    executable,
+                    cap,
+                }
+            })
+        );
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        accessControl.deleteBorrow({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        accessControl.deleteReturn({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        accessControl.deleteReturn({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            accessControl.deleteBorrow({
+                typeArguments: [this.args!.capType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            accessControl.deleteReturn({
+                typeArguments: [this.args!.capType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
-        accessControl.deleteBorrow({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        accessControl.deleteReturn({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        accessControl.deleteReturn({
-            typeArguments: [this.args!.capType],
-            arguments: { expired }
-        });
-        intents.destroyEmptyExpired(expired);
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
+        tx.add(
+            accessControl.deleteBorrow({
+                typeArguments: [this.args!.capType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            accessControl.deleteReturn({
+                typeArguments: [this.args!.capType],
+                arguments: { expired }
+            })
+        );
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }

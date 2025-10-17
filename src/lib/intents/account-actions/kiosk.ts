@@ -1,4 +1,4 @@
-import { TransactionArgument } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import { ListAction, TakeAction } from "../../../packages/account_actions/kiosk";
 import * as kiosk from "../../../packages/account_actions/kiosk";
 import * as kioskIntent from "../../../packages/account_actions/kiosk_intents";
@@ -24,6 +24,7 @@ export class TakeNftsIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -31,77 +32,104 @@ export class TakeNftsIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: TakeNftsArgs,
     ) {
-        kioskIntent.requestTakeNfts({
-            typeArguments: accountGenerics,
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                kioskName: actionArgs.kioskName,
-                nftIds: actionArgs.nftIds,
-                recipient: actionArgs.recipient,
-            }
-        });
+        tx.add(
+            kioskIntent.requestTakeNfts({
+                typeArguments: accountGenerics,
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    kioskName: actionArgs.kioskName,
+                    nftIds: actionArgs.nftIds,
+                    recipient: actionArgs.recipient,
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
         typesAndPolicies: { type: string, policy: string }[],
         accountKiosk: string,
         recipientKiosk: string,
         recipientCap: string,
-    ) {
+    ): TransactionResult {
+        let result;
         for (const { type, policy } of typesAndPolicies) {
-            kioskIntent.executeTakeNfts({
-                typeArguments: [...accountGenerics, type],
-                arguments: {
-                    executable,
-                    account: this.account,
-                    accountKiosk,
-                    recipientKiosk,
-                    recipientCap,
-                    policy,
-                }
-            });
-            // Note: moveCall functionality would need to be handled by the caller
-            // as we no longer have access to the Transaction object
+            result = tx.add(
+                kioskIntent.executeTakeNfts({
+                    typeArguments: [...accountGenerics, type],
+                    arguments: {
+                        executable,
+                        account: this.account,
+                        accountKiosk,
+                        recipientKiosk,
+                        recipientCap,
+                        policy,
+                    }
+                })
+            );
         }
+        return result!;
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         this.args.nftIds.forEach(_ => {
-            kiosk.deleteTake(expired);
+            tx.add(
+                kiosk.deleteTake({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         this.args.nftIds.forEach(_ => {
-            kiosk.deleteTake(expired);
+            tx.add(
+                kiosk.deleteTake({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
 
@@ -120,6 +148,7 @@ export class ListNftsIntent extends Intent {
     }
 
     request(
+        tx: Transaction,
         accountGenerics: [string, string],
         auth: TransactionArgument,
         account: string,
@@ -127,69 +156,98 @@ export class ListNftsIntent extends Intent {
         outcome: TransactionArgument,
         actionArgs: ListNftsArgs,
     ) {
-        kioskIntent.requestListNfts({
-            typeArguments: accountGenerics,
-            arguments: {
-                auth,
-                account,
-                params,
-                outcome,
-                kioskName: actionArgs.kioskName,
-                nftIds: actionArgs.listings.map(listing => listing.nftId),
-                prices: actionArgs.listings.map(listing => BigInt(listing.price)),
-            }
-        });
+        tx.add(
+            kioskIntent.requestListNfts({
+                typeArguments: accountGenerics,
+                arguments: {
+                    auth,
+                    account,
+                    params,
+                    outcome,
+                    kioskName: actionArgs.kioskName,
+                    nftIds: actionArgs.listings.map(listing => listing.nftId),
+                    prices: actionArgs.listings.map(listing => BigInt(listing.price)),
+                }
+            })
+        );
     }
 
     execute(
+        tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
         nftTypes: string[],
         accountKiosk: string,
-    ) {
+    ): TransactionResult {
+        let result;
         for (const type of nftTypes) {
-            kioskIntent.executeListNfts({
-                typeArguments: [...accountGenerics, type],
-                arguments: {
-                    executable,
-                    account: this.account,
-                    kiosk: accountKiosk,
-                }
-            });
+            result = tx.add(
+                kioskIntent.executeListNfts({
+                    typeArguments: [...accountGenerics, type],
+                    arguments: {
+                        executable,
+                        account: this.account,
+                        kiosk: accountKiosk,
+                    }
+                })
+            );
         }
+        return result!;
     }
 
     clearEmpty(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.destroyEmptyIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.destroyEmptyIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         this.args.listings.forEach(_ => {
-            kiosk.deleteList(expired);
+            tx.add(
+                kiosk.deleteList({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 
     deleteExpired(
+        tx: Transaction,
         accountGenerics: [string, string],
         key: string,
     ) {
-        const expired = accountProtocol.deleteExpiredIntent({
-            typeArguments: accountGenerics,
-            arguments: {
-                account: this.account,
-                key,
-            }
-        });
+        const expired = tx.add(
+            accountProtocol.deleteExpiredIntent({
+                typeArguments: accountGenerics,
+                arguments: {
+                    account: this.account,
+                    key,
+                }
+            })
+        );
         this.args.listings.forEach(_ => {
-            kiosk.deleteList(expired);
+            tx.add(
+                kiosk.deleteList({
+                    arguments: { expired }
+                })
+            );
         });
-        intents.destroyEmptyExpired(expired);
+        tx.add(
+            intents.destroyEmptyExpired({
+                arguments: { expired }
+            })
+        );
     }
 }
