@@ -6,9 +6,9 @@ import { SuinsClient } from '@mysten/suins';
 import { User as UserRaw, Invite as InviteRaw } from "../../packages/account_protocol/user";
 import { acceptInvite, refuseInvite, reorderAccounts } from "../../packages/account_protocol/user";
 import { _new, transfer, destroy } from "../../packages/account_protocol/user";
-import { USER_REGISTRY, ACCOUNT_PROTOCOL } from "../../types/constants";
 import { UserData, Invite, Profile } from "./types";
-import { RawTransactionArgument } from "src/packages/utils";
+import { RawTransactionArgument } from "../../packages/utils";
+import { ACCOUNT_PROTOCOL, USER_REGISTRY } from "../../types/constants";
 
 export class User implements UserData {
 	id: string = "";
@@ -44,10 +44,13 @@ export class User implements UserData {
 			filter: { StructType: `${ACCOUNT_PROTOCOL.V1}::user::User` },
 			options: { showContent: true, showBcs: true }
 		});
-		if (userData[0].data?.bcs?.dataType !== 'moveObject') {
-			throw new Error('Expected a move object')
+		
+		let userRaw;
+		if (userData.length === 0 || userData[0].data?.bcs?.dataType !== 'moveObject') {
+			userRaw = null;
+		} else {
+			userRaw = UserRaw.fromBase64(userData[0].data?.bcs?.bcsBytes);
 		}
-		const userRaw = userData.length !== 0 ? UserRaw.fromBase64(userData[0].data?.bcs?.bcsBytes) : null;
 
 		const profile = await this.fetchProfile(owner);
 

@@ -1,3 +1,4 @@
+import { Transaction, namedPackagesPlugin } from "@mysten/sui/transactions";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { Account, Intents, Owned, Managed, Extensions, User } from "../lib";
 import { SDKConfig } from "./types";
@@ -15,13 +16,17 @@ export class AccountSDK {
     ) { }
 
     static async init(
-        network: "mainnet" | "testnet" | "devnet" | "localnet" | string,
+        network: "mainnet" | "testnet" | string, // can only be "testnet" or mainnet because of mvr being used in codegen
         userAddr: string,
         accountId: string | undefined,
         config: SDKConfig,
     ): Promise<AccountSDK> {
-        const url = (network == "mainnet" || network == "testnet" || network == "devnet" || network == "localnet") ? getFullnodeUrl(network) : network;
+        const url = (network == "mainnet" || network == "testnet") ? getFullnodeUrl(network) : network;
         const client = new SuiClient({ url });
+
+        const mvrUrl = network === "testnet" ? "https://testnet.mvr.mystenlabs.com" : "https://mainnet.mvr.mystenlabs.com"
+        const plugin = namedPackagesPlugin({ url: mvrUrl });
+        Transaction.registerGlobalSerializationPlugin('namedPackagesPlugin', plugin);
 
         const extensions = await Extensions.init(client);
         const user = await User.init(client, config.accountType.type, userAddr);

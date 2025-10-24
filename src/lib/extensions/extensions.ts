@@ -1,8 +1,8 @@
 import { DynamicFieldInfo, SuiClient, SuiObjectResponse } from "@mysten/sui/client";
 import { Extensions as ExtensionsRaw } from "../../packages/account_extensions/extensions";
-import { EXTENSIONS } from "../../types/constants";
 import { Dep } from "../account";
 import { ExtensionData } from "./types";
+import { EXTENSIONS } from "../../types/constants";
 
 export class Extensions {
     extensions: ExtensionData[] = [];
@@ -59,10 +59,10 @@ export class Extensions {
         }
 
         const extensions: ExtensionData[] = extensionsDfs.map((dfValue: SuiObjectResponse) => {
-            const history = (dfValue.data?.content as any).map((entry: any) => {
+            const history = (dfValue.data?.content as any).fields.value.map((entry: any) => {
                 return {
-                    addr: entry.addr,
-                    version: Number(entry.version),
+                    addr: entry.fields.addr,
+                    version: Number(entry.fields.version),
                 }
             });
 
