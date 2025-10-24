@@ -1,12 +1,13 @@
 import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { open, deposit, close } from "../../packages/account_actions/vault";
+import { RawTransactionArgument } from "../../packages/utils";
 
 /// Opens a Vault managed by the Account
 export function openVault(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
+    account: RawTransactionArgument<string>,
     name: string,
 ) {
     tx.add(
@@ -23,9 +24,9 @@ export function depositFromWallet(
     configType: string,
     coinType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
+    account: RawTransactionArgument<string>,
     name: string,
-    coin: TransactionArgument,
+    coin: RawTransactionArgument<string>,
 ) {
     tx.add(
         deposit({
@@ -40,7 +41,7 @@ export function closeVault(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
+    account: RawTransactionArgument<string>,
     name: string,
 ) {
     tx.add(

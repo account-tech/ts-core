@@ -25,7 +25,7 @@ export interface Intent {
         accountGenerics: [string, string] | null, 
         executable: TransactionArgument, 
         ...args: any[]
-    ): TransactionResult;
+    ): TransactionResult | void | Promise<void>;
     
     clearEmpty(
         tx: Transaction,

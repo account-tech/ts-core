@@ -1,5 +1,6 @@
 import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { lockCap, publicBurn } from "../../packages/account_actions/currency";
+import { RawTransactionArgument } from "../../packages/utils";
 
 /// Deposits and locks a TreasuryCap in the Account
 export function depositTreasuryCap(
@@ -7,8 +8,8 @@ export function depositTreasuryCap(
     configType: string,
     coinType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    treasuryCap: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    treasuryCap: RawTransactionArgument<string>,
     maxSupply?: number,
 ) {
     tx.add(
@@ -24,8 +25,8 @@ export function burnCoins(
     tx: Transaction,
     configType: string,
     coinType: string,
-    account: TransactionArgument,
-    coin: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    coin: RawTransactionArgument<string>,
 ) {
     // caller should check if TreasuryCap exist and can_burn is enabled
     tx.add(

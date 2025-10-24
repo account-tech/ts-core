@@ -1,13 +1,14 @@
 import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { lockCap } from "../../packages/account_actions/package_upgrade";
+import { RawTransactionArgument } from "../../packages/utils";
 
 /// Deposits and locks an UpgradeCap in the Account
 export function depositUpgradeCap(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    upgradeCap: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    upgradeCap: RawTransactionArgument<string>,
     packageName: string, // can be anything
     delayMs: bigint,
 ) {

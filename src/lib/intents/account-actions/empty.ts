@@ -1,4 +1,4 @@
-import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as emptyIntent from "../../../packages/account_actions/empty_intents";
@@ -36,8 +36,8 @@ export class EmptyIntent extends Intent {
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        return tx.add(
+    ) {
+        tx.add(
             emptyIntent.executeEmpty({
                 typeArguments: [...accountGenerics],
                 arguments: {

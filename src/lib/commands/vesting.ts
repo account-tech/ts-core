@@ -2,6 +2,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
 import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
 import { claim as claimVesting, cancelPayment as cancelPaymentVesting, destroyEmpty as destroyEmptyVesting, destroyCap as destroyCapVesting } from "../../packages/account_actions/vesting";
+import { RawTransactionArgument } from "../../packages/utils";
 import { ACCOUNT_ACTIONS } from "../../types";
 
 export async function getCaps(
@@ -59,8 +60,8 @@ export async function getVestings(
 export function claim(
     tx: Transaction,
     coinType: string,
-    vesting: TransactionArgument,
-    cap: TransactionArgument,
+    vesting: RawTransactionArgument<string>,
+    cap: RawTransactionArgument<string>,
 ): TransactionResult {
     return tx.add(
         claimVesting({
@@ -76,8 +77,8 @@ export function cancelPayment(
     configType: string,
     coinType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    vesting: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    vesting: RawTransactionArgument<string>,
 ) {
     tx.add(
         cancelPaymentVesting({
@@ -91,7 +92,7 @@ export function cancelPayment(
 export function destroyEmpty(
     tx: Transaction,
     coinType: string,
-    vesting: TransactionArgument,
+    vesting: RawTransactionArgument<string>,
 ) {
     tx.add(
         destroyEmptyVesting({
@@ -104,7 +105,7 @@ export function destroyEmpty(
 /// Destroys a ClaimCap
 export function destroyCap(
     tx: Transaction,
-    cap: TransactionArgument,
+    cap: RawTransactionArgument<string>,
 ) {
     tx.add(
         destroyCapVesting({

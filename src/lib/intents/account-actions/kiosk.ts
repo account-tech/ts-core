@@ -1,4 +1,4 @@
-import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { ListAction, TakeAction } from "../../../packages/account_actions/kiosk";
 import * as kiosk from "../../../packages/account_actions/kiosk";
 import * as kioskIntent from "../../../packages/account_actions/kiosk_intents";
@@ -56,10 +56,9 @@ export class TakeNftsIntent extends Intent {
         accountKiosk: string,
         recipientKiosk: string,
         recipientCap: string,
-    ): TransactionResult {
-        let result;
+    ) {
         for (const { type, policy } of typesAndPolicies) {
-            result = tx.add(
+            tx.add(
                 kioskIntent.executeTakeNfts({
                     typeArguments: [...accountGenerics, type],
                     arguments: {
@@ -73,7 +72,6 @@ export class TakeNftsIntent extends Intent {
                 })
             );
         }
-        return result!;
     }
 
     clearEmpty(
@@ -178,10 +176,9 @@ export class ListNftsIntent extends Intent {
         executable: TransactionArgument,
         nftTypes: string[],
         accountKiosk: string,
-    ): TransactionResult {
-        let result;
+    ) {
         for (const type of nftTypes) {
-            result = tx.add(
+            tx.add(
                 kioskIntent.executeListNfts({
                     typeArguments: [...accountGenerics, type],
                     arguments: {
@@ -192,7 +189,6 @@ export class ListNftsIntent extends Intent {
                 })
             );
         }
-        return result!;
     }
 
     clearEmpty(

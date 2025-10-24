@@ -1,12 +1,13 @@
 import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { open, place, delist, withdrawProfits, close } from "../../packages/account_actions/kiosk";
+import { RawTransactionArgument } from "../../packages/utils";
 
 /// Opens a Kiosk managed by the Account
 export function openKiosk(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
+    account: RawTransactionArgument<string>,
     name: string,
 ) {
     tx.add(
@@ -23,13 +24,13 @@ export function placeInKiosk(
     configType: string,
     nftType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    accountKiosk: TransactionArgument,
-    senderKiosk: TransactionArgument,
-    senderCap: TransactionArgument,
-    transferPolicy: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    accountKiosk: RawTransactionArgument<string>,
+    senderKiosk: RawTransactionArgument<string>,
+    senderCap: RawTransactionArgument<string>,
+    transferPolicy: RawTransactionArgument<string>,
     kioskName: string,
-    nftId: TransactionArgument,
+    nftId: string,
 ) {
     tx.add(
         place({
@@ -45,10 +46,10 @@ export function delistFromKiosk(
     configType: string,
     nftType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    kiosk: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    kiosk: RawTransactionArgument<string>,
     name: string,
-    nftId: TransactionArgument,
+    nftId: string,
 ) {
     tx.add(
         delist({
@@ -63,8 +64,8 @@ export function withdrawProfitsFromKiosk(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    kiosk: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    kiosk: RawTransactionArgument<string>,
     name: string,
 ) {
     tx.add(
@@ -80,8 +81,8 @@ export function closeKiosk(
     tx: Transaction,
     configType: string,
     auth: TransactionArgument,
-    account: TransactionArgument,
-    kiosk: TransactionArgument,
+    account: RawTransactionArgument<string>,
+    kiosk: RawTransactionArgument<string>,
     name: string,
 ) {
     tx.add(
