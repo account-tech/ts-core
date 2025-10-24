@@ -1,4 +1,4 @@
-import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as owned from "../../../packages/account_protocol/owned";
@@ -13,12 +13,11 @@ import { DepositAction } from "../../../packages/account_actions/vault";
 
 import { ActionsIntentTypes, WithdrawObjectsAndTransferArgs, WithdrawCoinAndTransferArgs, WithdrawAndTransferToVaultArgs, WithdrawAndVestArgs } from "../types";
 import { Intent } from "../intent";
-import { Owned } from "../../objects/owned";
+import { findCoinsToMerge, findCoinsToMergeBatch, findObjectTypes } from "../../commands/owned";
 
 export class WithdrawAndTransferToVaultIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndTransferToVault;
     declare args: WithdrawAndTransferToVaultArgs;
-    coinId?: string;
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -55,25 +54,22 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
         );
     }
 
-    setCoinId(coinId: string) {
-        this.coinId = coinId;
-    }
-
-    execute(
+    async execute(
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        if (!this.coinId) {
-            throw new Error("Coin ID not initialized");
-        }
-        return tx.add(
+    ) {
+        const coins = await findCoinsToMerge(
+            this.client, this.account, this.args!.coinType, this.args!.coinAmount,
+        );
+
+        tx.add(
             ownedIntents.executeWithdrawAndTransferToVault({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
                     executable,
                     account: this.account,
-                    receiving: this.coinId as string,
+                    coins,
                 }
             })
         );
@@ -155,7 +151,6 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
 export class WithdrawObjectsAndTransferIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndTransfer;
     declare args: WithdrawObjectsAndTransferArgs;
-    typeById: Map<string, string> = new Map();
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -166,12 +161,6 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
                 recipient: TransferAction.fromBase64(actions[i * 2 + 1]).recipient,
             })),
         };
-    }
-
-    initTypeById(owned: Owned) {
-        this.args.transfers.forEach(transfer => {
-            this.typeById.set(transfer.objectId as string, owned.getTypeById(transfer.objectId as string)!);
-        });
     }
 
     request(
@@ -198,24 +187,19 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
         );
     }
 
-    execute(
+    async execute(
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        if (this.typeById.size === 0) {
-            throw new Error("Type by ID not initialized");
-        }
+    ) {
+        const objectTypes = await findObjectTypes(
+            this.client, this.args!.transfers.map(transfer => transfer.objectId as string),
+        );
 
-        let result;
         for (let i = 0; i < this.args!.transfers.length; i++) {
-            const objectType = this.typeById.get(this.args!.transfers[i].objectId as string);
-            if (!objectType) {
-                throw new Error("Object type not found");
-            }
-            result = tx.add(
+            tx.add(
                 ownedIntents.executeWithdrawObjectAndTransfer({
-                    typeArguments: [...accountGenerics, objectType],
+                    typeArguments: [...accountGenerics, objectTypes[i]],
                     arguments: {
                         executable,
                         account: this.account,
@@ -224,7 +208,6 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
                 })
             );
         }
-        return result!;
     }
 
     clearEmpty(
@@ -305,7 +288,6 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
 export class WithdrawCoinAndTransferIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndTransfer;
     declare args: WithdrawCoinAndTransferArgs;
-    coinIds?: string[];
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -344,32 +326,27 @@ export class WithdrawCoinAndTransferIntent extends Intent {
         );
     }
 
-    setCoinIds(coinIds: string[]) {
-        this.coinIds = coinIds;
-    }
-
-    execute(
+    async execute(
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        if (!this.coinIds) {
-            throw new Error("Coin IDs not initialized");
-        }
-        let result;
-        for (let i = 0; i < this.args!.transfers.length; i++) {
-            result = tx.add(
+    ) {
+        const amounts = this.args!.transfers.map(transfer => transfer.amount);
+        const coinBatches = await findCoinsToMergeBatch(
+            this.client, this.account, this.args!.coinType, amounts,
+        );
+        coinBatches.forEach(coins => {
+            tx.add(
                 ownedIntents.executeWithdrawCoinAndTransfer({
-                    typeArguments: [...accountGenerics, this.args!.coinType],
-                    arguments: {
-                        executable,
-                        account: this.account,
-                        receiving: this.coinIds![i],
-                    }
-                })
-            );
-        }
-        return result!;
+                typeArguments: [...accountGenerics, this.args!.coinType],
+                arguments: {
+                    executable,
+                    account: this.account,
+                    coins,
+                }
+            })
+        );
+        });
     }
 
     clearEmpty(
@@ -450,7 +427,6 @@ export class WithdrawCoinAndTransferIntent extends Intent {
 export class WithdrawAndVestIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndVest;
     declare args: WithdrawAndVestArgs;
-    coinId?: string;
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -491,22 +467,22 @@ export class WithdrawAndVestIntent extends Intent {
         );
     }
 
-    execute(
+    async execute(
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        if (!this.coinId) {
-            throw new Error("Coin ID not initialized");
-        }
+    ) {
+        const coins = await findCoinsToMerge(
+            this.client, this.account, this.args!.coinType, this.args!.coinAmount,
+        );
 
-        return tx.add(
+        tx.add(
             ownedIntents.executeWithdrawAndVest({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
                     executable,
                     account: this.account,
-                    receiving: this.coinId as string,
+                    coins,
                 }
             })
         );

@@ -1,4 +1,4 @@
-import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui/transactions";
+import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
 import { CoinMetadata } from "@mysten/sui/client";
 import { getCoinMeta } from "@polymedia/coinmeta";
 import * as currency from "../../../packages/account_actions/currency";
@@ -14,6 +14,7 @@ import { VestAction } from "../../../packages/account_actions/vesting";
 
 import { UpdateMetadataArgs, WithdrawAndBurnArgs, DisableRulesArgs, MintAndTransferArgs, MintAndVestArgs, ActionsIntentTypes } from "../types";
 import { Intent } from "../intent";
+import { findCoinsToMerge } from "src/lib/commands/owned";
 
 export class DisableRulesIntent extends Intent {
     static type = ActionsIntentTypes.DisableRules;
@@ -68,8 +69,8 @@ export class DisableRulesIntent extends Intent {
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        return tx.add(
+    ) {
+        tx.add(
             currencyIntent.executeDisableRules({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
@@ -191,12 +192,12 @@ export class UpdateMetadataIntent extends Intent {
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
+    ) {
         if (!this.metadata?.id) {
             throw new Error('Metadata not found for the Update intent');
         }
 
-        return tx.add(
+        tx.add(
             currencyIntent.executeUpdateMetadata({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
@@ -309,10 +310,9 @@ export class MintAndTransferIntent extends Intent {
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        let result;
+    ) {
         for (let i = 0; i < this.args!.transfers.length; i++) {
-            result = tx.add(
+            tx.add(
                 currencyIntent.executeMintAndTransfer({
                     typeArguments: [...accountGenerics, this.args!.coinType],
                     arguments: {
@@ -322,7 +322,6 @@ export class MintAndTransferIntent extends Intent {
                 })
             );
         }
-        return result!;
     }
 
     clearEmpty(
@@ -441,8 +440,8 @@ export class MintAndVestIntent extends Intent {
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        return tx.add(
+    ) {
+        tx.add(
             currencyIntent.executeMintAndVest({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
@@ -521,7 +520,6 @@ export class MintAndVestIntent extends Intent {
 export class WithdrawAndBurnIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawAndBurn;
     declare args: WithdrawAndBurnArgs;
-    coinId?: string;
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -559,26 +557,22 @@ export class WithdrawAndBurnIntent extends Intent {
         );
     }
 
-    setCoinId(coinId: string) {
-        this.coinId = coinId;
-    }
-
-    execute(
+    async execute(
         tx: Transaction,
         accountGenerics: [string, string],
         executable: TransactionArgument,
-    ): TransactionResult {
-        if (!this.coinId) {
-            throw new Error('Split and set the coin with the right amount first');
-        }
+    ) {
+        const coins = await findCoinsToMerge(
+            this.client, this.account, this.args!.coinType, this.args!.amount,
+        );
 
-        return tx.add(
+        tx.add(
             currencyIntent.executeWithdrawAndBurn({
                 typeArguments: [...accountGenerics, this.args!.coinType],
                 arguments: {
                     executable,
                     account: this.account,
-                    receiving: this.coinId,
+                    coins,
                 }
             })
         );
