@@ -45,8 +45,8 @@ export interface OpenOptions {
 export function open(options: OpenOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["auth", "account", "name"];
@@ -81,8 +81,8 @@ export interface DepositOptions {
 export function deposit(options: DepositOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[1]}>`
     ] satisfies string[];
@@ -115,8 +115,8 @@ export interface CloseOptions {
 export function close(options: CloseOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["auth", "account", "name"];
@@ -146,7 +146,7 @@ export interface HasVaultOptions {
 export function hasVault(options: HasVaultOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -176,7 +176,7 @@ export interface BorrowVaultOptions {
 export function borrowVault(options: BorrowVaultOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -289,7 +289,7 @@ export interface NewDepositOptions<IW extends BcsType<any>> {
 export function newDeposit<IW extends BcsType<any>>(options: NewDepositOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u64',
         `${options.typeArguments[2]}`
@@ -330,10 +330,10 @@ export interface DoDepositOptions<IW extends BcsType<any>> {
 export function doDeposit<IW extends BcsType<any>>(options: DoDepositOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[3]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "coin", "versionWitness", "intentWitness"];
@@ -361,7 +361,7 @@ export interface DeleteDepositOptions {
 export function deleteDeposit(options: DeleteDepositOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({
@@ -396,7 +396,7 @@ export interface NewSpendOptions<IW extends BcsType<any>> {
 export function newSpend<IW extends BcsType<any>>(options: NewSpendOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u64',
         `${options.typeArguments[2]}`
@@ -435,9 +435,9 @@ export interface DoSpendOptions<IW extends BcsType<any>> {
 export function doSpend<IW extends BcsType<any>>(options: DoSpendOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[3]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "versionWitness", "intentWitness"];
@@ -465,7 +465,7 @@ export interface DeleteSpendOptions {
 export function deleteSpend(options: DeleteSpendOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({

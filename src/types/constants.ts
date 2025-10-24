@@ -5,20 +5,19 @@ export const CLOCK = "0x00000000000000000000000000000000000000000000000000000000
 export const SUI_SYSTEM_STATE_INNER = "0x5b890eaf2abcfa2ab90b77b8e6f3d5d8609586c3e583baf3dccd5af17edf48d1";
 // TransferPolicy Rules
 export const TRANSFER_POLICY_RULES = [
-    'a82212d931d3bc7c3401552d935abced7b7fd41d4f57a99f0f47b9196b2f57f5::kiosk_lock_rule::Rule',
-    'a82212d931d3bc7c3401552d935abced7b7fd41d4f57a99f0f47b9196b2f57f5::royalty_rule::Rule',
-    'a82212d931d3bc7c3401552d935abced7b7fd41d4f57a99f0f47b9196b2f57f5::personal_kiosk_rule::Rule'
+    'e308bb3ed5367cd11a9c7f7e7aa95b2f3c9a8f10fa1d2b3cff38240f7898555d::kiosk_lock_rule::Rule',
+    'e308bb3ed5367cd11a9c7f7e7aa95b2f3c9a8f10fa1d2b3cff38240f7898555d::royalty_rule::Rule',
+    'e308bb3ed5367cd11a9c7f7e7aa95b2f3c9a8f10fa1d2b3cff38240f7898555d::personal_kiosk_rule::Rule'
 ];
 // Account.tech Published Packages
 export enum ACCOUNT_EXTENSIONS {
-    V1 = "0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242",
+    V1 = "0xce60a8a677814b1aae0aca19b49ccf35859dc5522aa407a74aaa55f28b0e641f",
 }
 export enum ACCOUNT_PROTOCOL {
-    V1 = "0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145",
+    V1 = "0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b",
 }
 export enum ACCOUNT_ACTIONS {
-    V1 = "0x12203dcf67d17a6b2da606cfad116e5e44f4f7537b131b8d319e0e872cb4ca0e",
-}
-// Shared objects
-export const EXTENSIONS = "0x4bede3cff5d460d1d37540238bd7275668f1af4fb4b31e5747182c5d563b7aab";
-export const USER_REGISTRY = "0x8ff880cf1c446e0958b25bbb6f268290e730927fe03d26d5687f7a6efb09fd81";
+    V1 = "0xd7978ba8692e8c49a8a057387dd5bba5f8f9d67a486a42c089bfcecff58dc5f1",
+}// Shared objects
+export const EXTENSIONS = "0xdcc888175b5ce6a26d05c3da7a22789991d52a633424c0e3816062be534cb0c7";
+export const USER_REGISTRY = "0x4ff15f724196005e79e30231e37e9cc75bd7866e6fdf2ed10197fec325e1fa88";

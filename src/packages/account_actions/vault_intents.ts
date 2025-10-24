@@ -37,9 +37,9 @@ export interface RequestSpendAndTransferOptions<Outcome extends BcsType<any>> {
 export function requestSpendAndTransfer<Outcome extends BcsType<any>>(options: RequestSpendAndTransferOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'vector<u64>',
@@ -77,8 +77,8 @@ export interface ExecuteSpendAndTransferOptions {
 export function executeSpendAndTransfer(options: ExecuteSpendAndTransferOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`
     ] satisfies string[];
     const parameterNames = ["executable", "account"];
     return (tx: Transaction) => tx.moveCall({
@@ -123,9 +123,9 @@ export interface RequestSpendAndVestOptions<Outcome extends BcsType<any>> {
 export function requestSpendAndVest<Outcome extends BcsType<any>>(options: RequestSpendAndVestOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u64',
@@ -162,8 +162,8 @@ export interface ExecuteSpendAndVestOptions {
 export function executeSpendAndVest(options: ExecuteSpendAndVestOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`
     ] satisfies string[];
     const parameterNames = ["executable", "account"];
     return (tx: Transaction) => tx.moveCall({

@@ -62,8 +62,8 @@ export interface LockCapOptions {
 export function lockCap(options: LockCapOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000002::package::UpgradeCap',
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u64'
@@ -95,7 +95,7 @@ export interface HasCapOptions {
 export function hasCap(options: HasCapOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -125,7 +125,7 @@ export interface GetCapPackageOptions {
 export function getCapPackage(options: GetCapPackageOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -155,7 +155,7 @@ export interface GetCapVersionOptions {
 export function getCapVersion(options: GetCapVersionOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -185,7 +185,7 @@ export interface GetCapPolicyOptions {
 export function getCapPolicy(options: GetCapPolicyOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -215,7 +215,7 @@ export interface GetTimeDelayOptions {
 export function getTimeDelay(options: GetTimeDelayOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "name"];
@@ -243,7 +243,7 @@ export interface GetPackagesInfoOptions {
 export function getPackagesInfo(options: GetPackagesInfoOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`
     ] satisfies string[];
     const parameterNames = ["account"];
     return (tx: Transaction) => tx.moveCall({
@@ -272,7 +272,7 @@ export interface IsPackageManagedOptions {
 export function isPackageManaged(options: IsPackageManagedOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         'address'
     ] satisfies string[];
     const parameterNames = ["account", "packageAddr"];
@@ -302,7 +302,7 @@ export interface GetPackageAddrOptions {
 export function getPackageAddr(options: GetPackageAddrOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
     ] satisfies string[];
     const parameterNames = ["account", "packageName"];
@@ -332,7 +332,7 @@ export interface GetPackageNameOptions {
 export function getPackageName(options: GetPackageNameOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         'address'
     ] satisfies string[];
     const parameterNames = ["account", "packageAddr"];
@@ -367,7 +367,7 @@ export interface NewUpgradeOptions<IW extends BcsType<any>> {
 export function newUpgrade<IW extends BcsType<any>>(options: NewUpgradeOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'vector<u8>',
         `${options.typeArguments[1]}`
@@ -405,10 +405,10 @@ export interface DoUpgradeOptions<IW extends BcsType<any>> {
 export function doUpgrade<IW extends BcsType<any>>(options: DoUpgradeOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock',
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[2]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "versionWitness", "intentWitness"];
@@ -433,7 +433,7 @@ export interface DeleteUpgradeOptions {
 export function deleteUpgrade(options: DeleteUpgradeOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({
@@ -464,7 +464,7 @@ export interface NewCommitOptions<IW extends BcsType<any>> {
 export function newCommit<IW extends BcsType<any>>(options: NewCommitOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         `${options.typeArguments[1]}`
     ] satisfies string[];
@@ -503,10 +503,10 @@ export interface DoCommitOptions<IW extends BcsType<any>> {
 export function doCommit<IW extends BcsType<any>>(options: DoCommitOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000002::package::UpgradeReceipt',
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[2]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "receipt", "versionWitness", "intentWitness"];
@@ -530,7 +530,7 @@ export interface DeleteCommitOptions {
 export function deleteCommit(options: DeleteCommitOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({
@@ -563,7 +563,7 @@ export interface NewRestrictOptions<IW extends BcsType<any>> {
 export function newRestrict<IW extends BcsType<any>>(options: NewRestrictOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String',
         'u8',
         `${options.typeArguments[1]}`
@@ -601,9 +601,9 @@ export interface DoRestrictOptions<IW extends BcsType<any>> {
 export function doRestrict<IW extends BcsType<any>>(options: DoRestrictOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[2]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "versionWitness", "intentWitness"];
@@ -628,7 +628,7 @@ export interface DeleteRestrictOptions {
 export function deleteRestrict(options: DeleteRestrictOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({

@@ -169,7 +169,7 @@ export function newWithdrawCoin<IW extends BcsType<any>>(options: NewWithdrawCoi
 export interface DoWithdrawCoinArguments<IW extends BcsType<any>> {
     executable: RawTransactionArgument<string>;
     account: RawTransactionArgument<string>;
-    receiving: RawTransactionArgument<string>;
+    coins: RawTransactionArgument<string[]>;
     intentWitness: RawTransactionArgument<IW>;
 }
 export interface DoWithdrawCoinOptions<IW extends BcsType<any>> {
@@ -177,7 +177,7 @@ export interface DoWithdrawCoinOptions<IW extends BcsType<any>> {
     arguments: DoWithdrawCoinArguments<IW> | [
         executable: RawTransactionArgument<string>,
         account: RawTransactionArgument<string>,
-        receiving: RawTransactionArgument<string>,
+        coins: RawTransactionArgument<string[]>,
         intentWitness: RawTransactionArgument<IW>
     ];
     typeArguments: [
@@ -193,10 +193,10 @@ export function doWithdrawCoin<IW extends BcsType<any>>(options: DoWithdrawCoinO
     const argumentsTypes = [
         `${packageAddress}::executable::Executable<${options.typeArguments[1]}>`,
         `${packageAddress}::account::Account<${options.typeArguments[0]}>`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>`,
+        `vector<0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>>`,
         `${options.typeArguments[3]}`
     ] satisfies string[];
-    const parameterNames = ["executable", "account", "receiving", "intentWitness"];
+    const parameterNames = ["executable", "account", "coins", "intentWitness"];
     return (tx: Transaction) => tx.moveCall({
         package: packageAddress,
         module: 'owned',
@@ -232,46 +232,6 @@ export function deleteWithdrawCoin(options: DeleteWithdrawCoinOptions) {
         package: packageAddress,
         module: 'owned',
         function: 'delete_withdraw_coin',
-        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        typeArguments: options.typeArguments
-    });
-}
-export interface MergeAndSplitArguments {
-    auth: RawTransactionArgument<string>;
-    account: RawTransactionArgument<string>;
-    toMerge: RawTransactionArgument<string[]>;
-    toSplit: RawTransactionArgument<number | bigint[]>;
-}
-export interface MergeAndSplitOptions {
-    package?: string;
-    arguments: MergeAndSplitArguments | [
-        auth: RawTransactionArgument<string>,
-        account: RawTransactionArgument<string>,
-        toMerge: RawTransactionArgument<string[]>,
-        toSplit: RawTransactionArgument<number | bigint[]>
-    ];
-    typeArguments: [
-        string,
-        string
-    ];
-}
-/**
- * Authorized addresses can merge and split coins. Returns the IDs to use in a
- * following intent, conserves the order.
- */
-export function mergeAndSplit(options: MergeAndSplitOptions) {
-    const packageAddress = options.package ?? '@account/protocol';
-    const argumentsTypes = [
-        `${packageAddress}::account::Auth`,
-        `${packageAddress}::account::Account<${options.typeArguments[0]}>`,
-        `vector<0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[1]}>>>`,
-        'vector<u64>'
-    ] satisfies string[];
-    const parameterNames = ["auth", "account", "toMerge", "toSplit"];
-    return (tx: Transaction) => tx.moveCall({
-        package: packageAddress,
-        module: 'owned',
-        function: 'merge_and_split',
         arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         typeArguments: options.typeArguments
     });

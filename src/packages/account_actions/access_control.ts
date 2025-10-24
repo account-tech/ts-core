@@ -56,8 +56,8 @@ export interface LockCapOptions<Cap extends BcsType<any>> {
 export function lockCap<Cap extends BcsType<any>>(options: LockCapOptions<Cap>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         `${options.typeArguments[1]}`
     ] satisfies string[];
     const parameterNames = ["auth", "account", "cap"];
@@ -86,7 +86,7 @@ export interface HasLockOptions {
 export function hasLock(options: HasLockOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`
     ] satisfies string[];
     const parameterNames = ["account"];
     return (tx: Transaction) => tx.moveCall({
@@ -117,7 +117,7 @@ export interface NewBorrowOptions<IW extends BcsType<any>> {
 export function newBorrow<IW extends BcsType<any>>(options: NewBorrowOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         `${options.typeArguments[2]}`
     ] satisfies string[];
     const parameterNames = ["intent", "intentWitness"];
@@ -154,9 +154,9 @@ export interface DoBorrowOptions<IW extends BcsType<any>> {
 export function doBorrow<IW extends BcsType<any>>(options: DoBorrowOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[3]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "versionWitness", "intentWitness"];
@@ -184,7 +184,7 @@ export interface DeleteBorrowOptions {
 export function deleteBorrow(options: DeleteBorrowOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({
@@ -215,7 +215,7 @@ export interface NewReturnOptions<IW extends BcsType<any>> {
 export function newReturn<IW extends BcsType<any>>(options: NewReturnOptions<IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Intent<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Intent<${options.typeArguments[0]}>`,
         `${options.typeArguments[2]}`
     ] satisfies string[];
     const parameterNames = ["intent", "intentWitness"];
@@ -254,10 +254,10 @@ export interface DoReturnOptions<Cap extends BcsType<any>, IW extends BcsType<an
 export function doReturn<Cap extends BcsType<any>, IW extends BcsType<any>>(options: DoReturnOptions<Cap, IW>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         `${options.typeArguments[2]}`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::version_witness::VersionWitness',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::version_witness::VersionWitness',
         `${options.typeArguments[3]}`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "cap", "versionWitness", "intentWitness"];
@@ -285,7 +285,7 @@ export interface DeleteReturnOptions {
 export function deleteReturn(options: DeleteReturnOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Expired'
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Expired'
     ] satisfies string[];
     const parameterNames = ["expired"];
     return (tx: Transaction) => tx.moveCall({

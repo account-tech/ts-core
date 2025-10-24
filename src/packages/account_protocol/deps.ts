@@ -5,7 +5,7 @@
 
 /**
  * Dependencies are the packages that an Account object can call. They are stored
- * in a vector and can be modified through an intent. AccountProtocol is the only
+ * in a vector and can be modified through an intent. account_protocol is the only
  * mandatory dependency, found at index 0.
  * 
  * For improved security, we provide a whitelist of allowed packages in Extensions.
@@ -42,11 +42,11 @@ export interface NewOptions {
         versions: RawTransactionArgument<number | bigint[]>
     ];
 }
-/** Creates a new Deps struct, AccountProtocol must be the first dependency. */
+/** Creates a new Deps struct, account_protocol must be the first dependency. */
 export function _new(options: NewOptions) {
     const packageAddress = options.package ?? '@account/protocol';
     const argumentsTypes = [
-        '0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242::extensions::Extensions',
+        '0xce60a8a677814b1aae0aca19b49ccf35859dc5522aa407a74aaa55f28b0e641f::extensions::Extensions',
         'bool',
         'vector<0x0000000000000000000000000000000000000000000000000000000000000001::string::String>',
         'vector<address>',
@@ -78,7 +78,7 @@ export interface NewLatestExtensionsOptions {
 export function newLatestExtensions(options: NewLatestExtensionsOptions) {
     const packageAddress = options.package ?? '@account/protocol';
     const argumentsTypes = [
-        '0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242::extensions::Extensions',
+        '0xce60a8a677814b1aae0aca19b49ccf35859dc5522aa407a74aaa55f28b0e641f::extensions::Extensions',
         'vector<0x0000000000000000000000000000000000000000000000000000000000000001::string::String>'
     ] satisfies string[];
     const parameterNames = ["extensions", "names"];
@@ -109,7 +109,7 @@ export interface NewInnerOptions {
 export function newInner(options: NewInnerOptions) {
     const packageAddress = options.package ?? '@account/protocol';
     const argumentsTypes = [
-        '0x1d30bc47bb24a3d2171ac3049088ad1f7d29c0d6ff8bb899b64206c5ee543242::extensions::Extensions',
+        '0xce60a8a677814b1aae0aca19b49ccf35859dc5522aa407a74aaa55f28b0e641f::extensions::Extensions',
         `${packageAddress}::deps::Deps`,
         'vector<0x0000000000000000000000000000000000000000000000000000000000000001::string::String>',
         'vector<address>',

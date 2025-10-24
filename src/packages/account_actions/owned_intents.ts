@@ -37,9 +37,9 @@ export interface RequestWithdrawAndTransferToVaultOptions<Outcome extends BcsTyp
 export function requestWithdrawAndTransferToVault<Outcome extends BcsType<any>>(options: RequestWithdrawAndTransferToVaultOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         'u64',
         '0x0000000000000000000000000000000000000000000000000000000000000001::string::String'
@@ -56,14 +56,14 @@ export function requestWithdrawAndTransferToVault<Outcome extends BcsType<any>>(
 export interface ExecuteWithdrawAndTransferToVaultArguments {
     executable: RawTransactionArgument<string>;
     account: RawTransactionArgument<string>;
-    receiving: RawTransactionArgument<string>;
+    coins: RawTransactionArgument<string[]>;
 }
 export interface ExecuteWithdrawAndTransferToVaultOptions {
     package?: string;
     arguments: ExecuteWithdrawAndTransferToVaultArguments | [
         executable: RawTransactionArgument<string>,
         account: RawTransactionArgument<string>,
-        receiving: RawTransactionArgument<string>
+        coins: RawTransactionArgument<string[]>
     ];
     typeArguments: [
         string,
@@ -78,11 +78,11 @@ export interface ExecuteWithdrawAndTransferToVaultOptions {
 export function executeWithdrawAndTransferToVault(options: ExecuteWithdrawAndTransferToVaultOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        `vector<0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>>`
     ] satisfies string[];
-    const parameterNames = ["executable", "account", "receiving"];
+    const parameterNames = ["executable", "account", "coins"];
     return (tx: Transaction) => tx.moveCall({
         package: packageAddress,
         module: 'owned_intents',
@@ -118,9 +118,9 @@ export interface RequestWithdrawObjectsAndTransferOptions<Outcome extends BcsTyp
 export function requestWithdrawObjectsAndTransfer<Outcome extends BcsType<any>>(options: RequestWithdrawObjectsAndTransferOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         'vector<0x0000000000000000000000000000000000000000000000000000000000000002::object::ID>',
         'vector<address>'
@@ -159,8 +159,8 @@ export interface ExecuteWithdrawObjectAndTransferOptions {
 export function executeWithdrawObjectAndTransfer(options: ExecuteWithdrawObjectAndTransferOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
         `0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<${options.typeArguments[2]}>`
     ] satisfies string[];
     const parameterNames = ["executable", "account", "receiving"];
@@ -200,9 +200,9 @@ export interface RequestWithdrawCoinAndTransferOptions<Outcome extends BcsType<a
 export function requestWithdrawCoinAndTransfer<Outcome extends BcsType<any>>(options: RequestWithdrawCoinAndTransferOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         'vector<u64>',
         'vector<address>'
@@ -219,14 +219,14 @@ export function requestWithdrawCoinAndTransfer<Outcome extends BcsType<any>>(opt
 export interface ExecuteWithdrawCoinAndTransferArguments {
     executable: RawTransactionArgument<string>;
     account: RawTransactionArgument<string>;
-    receiving: RawTransactionArgument<string>;
+    coins: RawTransactionArgument<string[]>;
 }
 export interface ExecuteWithdrawCoinAndTransferOptions {
     package?: string;
     arguments: ExecuteWithdrawCoinAndTransferArguments | [
         executable: RawTransactionArgument<string>,
         account: RawTransactionArgument<string>,
-        receiving: RawTransactionArgument<string>
+        coins: RawTransactionArgument<string[]>
     ];
     typeArguments: [
         string,
@@ -241,11 +241,11 @@ export interface ExecuteWithdrawCoinAndTransferOptions {
 export function executeWithdrawCoinAndTransfer(options: ExecuteWithdrawCoinAndTransferOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        `vector<0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>>`
     ] satisfies string[];
-    const parameterNames = ["executable", "account", "receiving"];
+    const parameterNames = ["executable", "account", "coins"];
     return (tx: Transaction) => tx.moveCall({
         package: packageAddress,
         module: 'owned_intents',
@@ -286,9 +286,9 @@ export interface RequestWithdrawAndVestOptions<Outcome extends BcsType<any>> {
 export function requestWithdrawAndVest<Outcome extends BcsType<any>>(options: RequestWithdrawAndVestOptions<Outcome>) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Auth',
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        '0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::intents::Params',
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Auth',
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        '0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::intents::Params',
         `${options.typeArguments[1]}`,
         'u64',
         'u64',
@@ -307,14 +307,14 @@ export function requestWithdrawAndVest<Outcome extends BcsType<any>>(options: Re
 export interface ExecuteWithdrawAndVestArguments {
     executable: RawTransactionArgument<string>;
     account: RawTransactionArgument<string>;
-    receiving: RawTransactionArgument<string>;
+    coins: RawTransactionArgument<string[]>;
 }
 export interface ExecuteWithdrawAndVestOptions {
     package?: string;
     arguments: ExecuteWithdrawAndVestArguments | [
         executable: RawTransactionArgument<string>,
         account: RawTransactionArgument<string>,
-        receiving: RawTransactionArgument<string>
+        coins: RawTransactionArgument<string[]>
     ];
     typeArguments: [
         string,
@@ -326,11 +326,11 @@ export interface ExecuteWithdrawAndVestOptions {
 export function executeWithdrawAndVest(options: ExecuteWithdrawAndVestOptions) {
     const packageAddress = options.package ?? '@account/actions';
     const argumentsTypes = [
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::executable::Executable<${options.typeArguments[1]}>`,
-        `0xc967e077f5b0f892658d854d5a454f8ed84027d9afd3cab26a5e6d6004637145::account::Account<${options.typeArguments[0]}>`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>`
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::executable::Executable<${options.typeArguments[1]}>`,
+        `0xb4cb9bfc37d340519e834165d6fc791ec279f756c2d3a3e2086ec22e09c04d3b::account::Account<${options.typeArguments[0]}>`,
+        `vector<0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving<0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[2]}>>>`
     ] satisfies string[];
-    const parameterNames = ["executable", "account", "receiving"];
+    const parameterNames = ["executable", "account", "coins"];
     return (tx: Transaction) => tx.moveCall({
         package: packageAddress,
         module: 'owned_intents',
