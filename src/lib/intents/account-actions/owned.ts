@@ -286,7 +286,7 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
 }
 
 export class WithdrawCoinAndTransferIntent extends Intent {
-    static type = ActionsIntentTypes.WithdrawCoinAndTransfer;
+    static type = ActionsIntentTypes.WithdrawCoinsAndTransfer;
     declare args: WithdrawCoinAndTransferArgs;
 
     async init() {

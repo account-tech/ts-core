@@ -36,7 +36,7 @@ export const ActionsIntentTypes = {
 
     WithdrawAndTransferToVault: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawAndTransferToVaultIntent`,
     WithdrawObjectsAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawObjectsAndTransferIntent`,
-    WithdrawCoinAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawCoinAndTransferIntent`,
+    WithdrawCoinsAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawCoinsAndTransferIntent`,
     WithdrawAndVest: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawAndVestIntent`,
 
     UpgradePackage: `${ACCOUNT_ACTIONS.V1}::package_upgrade_intents::UpgradePackageIntent`,

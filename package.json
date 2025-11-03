@@ -1,6 +1,6 @@
 {
   "name": "@account.tech/core",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "Core library for defining account SDKs with account.tech",
   "author": "Thouny <thouny@tuta.io>",
   "license": "Apache-2.0",
