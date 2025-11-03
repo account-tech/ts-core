@@ -5,9 +5,6 @@ import * as vault from "../../../packages/account_actions/vault";
 import * as vaultIntents from "../../../packages/account_actions/vault_intents";
 import * as transfer from "../../../packages/account_actions/transfer";
 import * as vesting from "../../../packages/account_actions/vesting";
-import { SpendAction } from "../../../packages/account_actions/vault";
-import { TransferAction } from "../../../packages/account_actions/transfer";
-import { VestAction } from "../../../packages/account_actions/vesting";
 
 import { ActionsIntentTypes, SpendAndTransferArgs, SpendAndVestArgs } from "../types";
 import { Intent } from "../intent";
@@ -22,10 +19,10 @@ export class SpendAndTransferIntent extends Intent {
 
         this.args = {
             coinType,
-            vaultName: SpendAction.fromBase64(actions[0]).name,
+            vaultName: actions[0].fields.name,
             transfers: Array.from({ length: actions.length / 2 }, (_, i) => ({
-                amount: BigInt(SpendAction.fromBase64(actions[i * 2]).amount),
-                recipient: TransferAction.fromBase64(actions[i * 2 + 1]).recipient,
+                amount: BigInt(actions[i * 2].fields.amount),
+                recipient: actions[i * 2 + 1].fields.recipient,
             })),
         };
     }
@@ -152,16 +149,13 @@ export class SpendAndVestIntent extends Intent {
         const actions = await this.fetchActions(this.fields.actionsId);
         const coinType = actions[0].type.match(/<([^>]*)>/)[1];
 
-        const spendAction = SpendAction.fromBase64(actions[0]);
-        const vestAction = VestAction.fromBase64(actions[1]);
-
         this.args = {
-            vaultName: spendAction.name,
+            vaultName: actions[0].fields.name,
             coinType,
-            amount: BigInt(spendAction.amount),
-            start: BigInt(vestAction.start_timestamp),
-            end: BigInt(vestAction.end_timestamp),
-            recipient: vestAction.recipient,
+            amount: BigInt(actions[0].fields.amount),
+            start: BigInt(actions[1].fields.start_timestamp),
+            end: BigInt(actions[1].fields.end_timestamp),
+            recipient: actions[1].fields.recipient,
         };
     }
 

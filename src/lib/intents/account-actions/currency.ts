@@ -8,9 +8,6 @@ import * as transfer from "../../../packages/account_actions/transfer";
 import * as vesting from "../../../packages/account_actions/vesting";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
-import { MintAction, BurnAction, UpdateAction, DisableAction } from "../../../packages/account_actions/currency";
-import { TransferAction } from "../../../packages/account_actions/transfer";
-import { VestAction } from "../../../packages/account_actions/vesting";
 
 import { UpdateMetadataArgs, WithdrawAndBurnArgs, DisableRulesArgs, MintAndTransferArgs, MintAndVestArgs, ActionsIntentTypes } from "../types";
 import { Intent } from "../intent";
@@ -22,18 +19,16 @@ export class DisableRulesIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-
         const coinType = actions[0].type.match(/<([^>]*)>/)[1];
-        const disableAction = DisableAction.fromBase64(actions[0]);
 
         this.args = {
             coinType,
-            mint: disableAction.mint,
-            burn: disableAction.burn,
-            updateSymbol: disableAction.update_symbol,
-            updateName: disableAction.update_name,
-            updateDescription: disableAction.update_description,
-            updateIcon: disableAction.update_icon,
+            mint: actions[0].fields.mint,
+            burn: actions[0].fields.burn,
+            updateSymbol: actions[0].fields.update_symbol,
+            updateName: actions[0].fields.update_name,
+            updateDescription: actions[0].fields.update_description,
+            updateIcon: actions[0].fields.update_icon,
         };
     }
 
@@ -143,16 +138,14 @@ export class UpdateMetadataIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-
         const coinType = actions[0].type.match(/<([^>]*)>/)[1];
-        const updateAction = UpdateAction.fromBase64(actions[0]); // CoinType, UpdateAction
 
         this.args = {
             coinType,
-            newName: updateAction.name,
-            newSymbol: updateAction.symbol,
-            newDescription: updateAction.description,
-            newIconUrl: updateAction.icon_url,
+            newName: actions[0].fields.name,
+            newSymbol: actions[0].fields.symbol,
+            newDescription: actions[0].fields.description,
+            newIconUrl: actions[0].fields.icon_url,
         };
 
         const metadata = await getCoinMeta(this.client, this.args.coinType);
@@ -272,12 +265,11 @@ export class MintAndTransferIntent extends Intent {
         const actions = await this.fetchActions(this.fields.actionsId);
         const coinType = actions[0].type.match(/<([^>]*)>/)[1];
 
-
         this.args = {
             coinType,
             transfers: Array.from({ length: actions.length / 2 }, (_, i) => ({
-                amount: BigInt(MintAction.fromBase64(actions[i * 2]).amount),
-                recipient: TransferAction.fromBase64(actions[i * 2 + 1]).recipient,
+                amount: BigInt(actions[i * 2].fields.amount),
+                recipient: actions[i * 2 + 1].fields.recipient,
             })),
         };
     }
@@ -403,10 +395,10 @@ export class MintAndVestIntent extends Intent {
 
         this.args = {
             coinType,
-            amount: BigInt(MintAction.fromBase64(actions[0]).amount),
-            recipient: VestAction.fromBase64(actions[1]).recipient,
-            start: BigInt(VestAction.fromBase64(actions[1]).start_timestamp),
-            end: BigInt(VestAction.fromBase64(actions[1]).end_timestamp),
+            amount: BigInt(actions[0].fields.amount),
+            recipient: actions[1].fields.recipient,
+            start: BigInt(actions[1].fields.start_timestamp),
+            end: BigInt(actions[1].fields.end_timestamp),
         };
     }
 
@@ -523,14 +515,11 @@ export class WithdrawAndBurnIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-
-        // const withdrawAction = WithdrawCoinAction.fromBase64(actions[0]);
         const coinType = actions[1].type.match(/<([^>]*)>/)[1];
-        const burnAction = BurnAction.fromBase64(actions[1]);
 
         this.args = {
             coinType,
-            amount: BigInt(burnAction.amount),
+            amount: BigInt(actions[1].fields.amount),
         };
     }
 

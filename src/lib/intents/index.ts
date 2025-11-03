@@ -16,7 +16,7 @@ export type {
     BorrowCapArgs,
     DisableRulesArgs, UpdateMetadataArgs, MintAndTransferArgs, MintAndVestArgs, WithdrawAndBurnArgs,
     TakeNftsArgs, ListNftsArgs,
-    WithdrawAndTransferToVaultArgs, WithdrawObjectsAndTransferArgs, WithdrawCoinAndTransferArgs, WithdrawAndVestArgs,
+    WithdrawAndTransferToVaultArgs, WithdrawObjectsAndTransferArgs, WithdrawCoinsAndTransferArgs, WithdrawAndVestArgs,
     SpendAndTransferArgs, SpendAndVestArgs,
     UpgradePackageArgs, RestrictPolicyArgs,
 } from "./types";

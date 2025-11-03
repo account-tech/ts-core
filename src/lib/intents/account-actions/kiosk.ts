@@ -1,5 +1,4 @@
 import { Transaction, TransactionArgument } from "@mysten/sui/transactions";
-import { ListAction, TakeAction } from "../../../packages/account_actions/kiosk";
 import * as kiosk from "../../../packages/account_actions/kiosk";
 import * as kioskIntent from "../../../packages/account_actions/kiosk_intents";
 import * as accountProtocol from "../../../packages/account_protocol/account";
@@ -14,12 +13,11 @@ export class TakeNftsIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const takeActions = actions.map(action => TakeAction.fromBase64(action));
 
         this.args = {
-            kioskName: takeActions[0].name,
-            nftIds: takeActions.map(action => action.nft_id),
-            recipient: takeActions[0].recipient,
+            kioskName: actions[0].fields.name,
+            nftIds: actions.map(action => action.fields.nft_id),
+            recipient: actions[0].fields.recipient,
         };
     }
 
@@ -137,11 +135,13 @@ export class ListNftsIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const listActions = actions.map(action => ListAction.fromBase64(action));
 
         this.args = {
-            kioskName: listActions[0].name,
-            listings: listActions.map(action => ({ nftId: action.nft_id, price: BigInt(action.price) })),
+            kioskName: actions[0].fields.name,
+            listings: actions.map(action => ({ 
+                nftId: action.fields.nft_id, 
+                price: BigInt(action.fields.price),
+            })),
         };
     }
 

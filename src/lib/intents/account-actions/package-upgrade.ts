@@ -3,7 +3,6 @@ import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
 import * as upgradePolicies from "../../../packages/account_actions/package_upgrade";
 import * as upgradePoliciesIntents from "../../../packages/account_actions/package_upgrade_intents";
-import { RestrictAction, UpgradeAction } from "../../../packages/account_actions/package_upgrade";
 
 import { ActionsIntentTypes, RestrictPolicyArgs, UpgradePackageArgs } from "../types";
 import { Intent } from "../intent";
@@ -14,11 +13,10 @@ export class UpgradePackageIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const upgradeAction = UpgradeAction.fromBase64(actions[0]);
 
         this.args = {
-            packageName: upgradeAction.name,
-            digest: upgradeAction.digest,
+            packageName: actions[0].fields.name,
+            digest: actions[0].fields.digest,
         };
     }
 
@@ -149,15 +147,10 @@ export class RestrictPolicyIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const restrictAction = RestrictAction.fromBase64(actions[0]);
-
-        if (restrictAction.policy !== 0 && restrictAction.policy !== 128 && restrictAction.policy !== 192 && restrictAction.policy !== 255) {
-            throw new Error("Invalid policy");
-        }
 
         this.args = {
-            packageName: restrictAction.name,
-            policy: restrictAction.policy,
+            packageName: actions[0].fields.name,
+            policy: actions[0].fields.policy,
         };
     }
 

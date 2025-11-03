@@ -76,7 +76,7 @@ export type ActionsArgs =
     BorrowCapArgs |
     DisableRulesArgs | UpdateMetadataArgs | MintAndTransferArgs | MintAndVestArgs | WithdrawAndBurnArgs |
     TakeNftsArgs | ListNftsArgs |
-    WithdrawAndTransferToVaultArgs | WithdrawObjectsAndTransferArgs | WithdrawCoinAndTransferArgs | WithdrawAndVestArgs |
+    WithdrawAndTransferToVaultArgs | WithdrawObjectsAndTransferArgs | WithdrawCoinsAndTransferArgs | WithdrawAndVestArgs |
     SpendAndTransferArgs | SpendAndVestArgs |
     UpgradePackageArgs | RestrictPolicyArgs;
 
@@ -147,7 +147,7 @@ export type WithdrawObjectsAndTransferArgs = {
     transfers: { objectId: string, recipient: string }[];
 }
 
-export type WithdrawCoinAndTransferArgs = {
+export type WithdrawCoinsAndTransferArgs = {
     coinType: string;
     transfers: { amount: bigint, recipient: string }[];
 }

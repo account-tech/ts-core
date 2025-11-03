@@ -6,12 +6,8 @@ import * as ownedIntents from "../../../packages/account_actions/owned_intents";
 import * as transfer from "../../../packages/account_actions/transfer";
 import * as vesting from "../../../packages/account_actions/vesting";
 import * as vault from "../../../packages/account_actions/vault";
-import { WithdrawObjectAction, WithdrawCoinAction } from "../../../packages/account_protocol/owned";
-import { TransferAction } from "../../../packages/account_actions/transfer";
-import { VestAction } from "../../../packages/account_actions/vesting";
-import { DepositAction } from "../../../packages/account_actions/vault";
 
-import { ActionsIntentTypes, WithdrawObjectsAndTransferArgs, WithdrawCoinAndTransferArgs, WithdrawAndTransferToVaultArgs, WithdrawAndVestArgs } from "../types";
+import { ActionsIntentTypes, WithdrawObjectsAndTransferArgs, WithdrawCoinsAndTransferArgs, WithdrawAndTransferToVaultArgs, WithdrawAndVestArgs } from "../types";
 import { Intent } from "../intent";
 import { findCoinsToMerge, findCoinsToMergeBatch, findObjectTypes } from "../../commands/owned";
 
@@ -25,8 +21,8 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
 
         this.args = {
             coinType,
-            coinAmount: BigInt(DepositAction.fromBase64(actions[1]).amount),
-            vaultName: DepositAction.fromBase64(actions[1]).name,
+            coinAmount: BigInt(actions[1].fields.amount),
+            vaultName: actions[1].fields.name,
         };
     }
 
@@ -157,8 +153,8 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
 
         this.args = {
             transfers: Array.from({ length: actions.length / 2 }, (_, i) => ({
-                objectId: WithdrawObjectAction.fromBase64(actions[i * 2]).object_id,
-                recipient: TransferAction.fromBase64(actions[i * 2 + 1]).recipient,
+                objectId: actions[i * 2].fields.object_id,
+                recipient: actions[i * 2 + 1].fields.recipient,
             })),
         };
     }
@@ -287,7 +283,7 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
 
 export class WithdrawCoinAndTransferIntent extends Intent {
     static type = ActionsIntentTypes.WithdrawCoinsAndTransfer;
-    declare args: WithdrawCoinAndTransferArgs;
+    declare args: WithdrawCoinsAndTransferArgs;
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
@@ -296,8 +292,8 @@ export class WithdrawCoinAndTransferIntent extends Intent {
         this.args = {
             coinType,
             transfers: Array.from({ length: actions.length / 2 }, (_, i) => ({
-                amount: BigInt(WithdrawCoinAction.fromBase64(actions[i * 2]).coin_amount),
-                recipient: TransferAction.fromBase64(actions[i * 2 + 1]).recipient,
+                amount: BigInt(actions[i * 2].fields.coin_amount),
+                recipient: actions[i * 2 + 1].fields.recipient,
             })),
         };
     }
@@ -309,7 +305,7 @@ export class WithdrawCoinAndTransferIntent extends Intent {
         account: string,
         params: TransactionArgument,
         outcome: TransactionArgument,
-        actionArgs: WithdrawCoinAndTransferArgs,
+        actionArgs: WithdrawCoinsAndTransferArgs,
     ) {
         tx.add(
             ownedIntents.requestWithdrawCoinAndTransfer({
@@ -434,10 +430,10 @@ export class WithdrawAndVestIntent extends Intent {
 
         this.args = {
             coinType,
-            coinAmount: BigInt(WithdrawCoinAction.fromBase64(actions[0]).coin_amount),
-            start: BigInt(VestAction.fromBase64(actions[1]).start_timestamp),
-            end: BigInt(VestAction.fromBase64(actions[1]).end_timestamp),
-            recipient: VestAction.fromBase64(actions[1]).recipient,
+            coinAmount: BigInt(actions[0].fields.coin_amount),
+            start: BigInt(actions[1].fields.start_timestamp),
+            end: BigInt(actions[1].fields.end_timestamp),
+            recipient: actions[1].fields.recipient,
         };
     }
 

@@ -2,7 +2,6 @@ import { Transaction, TransactionArgument, TransactionResult } from "@mysten/sui
 import * as config from "../../../packages/account_protocol/config";
 import * as accountProtocol from "../../../packages/account_protocol/account";
 import * as intents from "../../../packages/account_protocol/intents";
-import { ConfigDepsAction, ToggleUnverifiedAllowedAction } from "../../../packages/account_protocol/config";
 
 import { EXTENSIONS } from "../../../types";
 import { ConfigDepsArgs, ProtocolIntentTypes, ToggleUnverifiedAllowedArgs } from "../types";
@@ -14,13 +13,12 @@ export class ConfigDepsIntent extends Intent {
 
     async init() {
         const actions = await this.fetchActions(this.fields.actionsId);
-        const configDepsAction = ConfigDepsAction.fromBase64(actions[0]);
 
         this.args = {
-            deps: configDepsAction.deps.map((dep) => ({
-                name: dep.name,
-                addr: dep.addr,
-                version: Number(dep.version),
+            deps: actions[0].fields.deps.map((dep: any) => ({
+                name: dep.fields.name,
+                addr: dep.fields.addr,
+                version: Number(dep.fields.version),
             })),
         };
     }
@@ -134,9 +132,6 @@ export class ToggleUnverifiedAllowedIntent extends Intent {
     declare args: ToggleUnverifiedAllowedArgs;
 
     async init() {
-        const actions = await this.fetchActions(this.fields.actionsId);
-        ToggleUnverifiedAllowedAction.fromBase64(actions[0]);
-
         this.args = {};
     }
 

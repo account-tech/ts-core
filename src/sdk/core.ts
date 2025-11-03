@@ -23,17 +23,17 @@ export class AccountSDK {
     ): Promise<AccountSDK> {
         const url = (network == "mainnet" || network == "testnet") ? getFullnodeUrl(network) : network;
         const client = new SuiClient({ url });
-
+        
         const mvrUrl = network === "testnet" ? "https://testnet.mvr.mystenlabs.com" : "https://mainnet.mvr.mystenlabs.com"
         const plugin = namedPackagesPlugin({ url: mvrUrl });
         Transaction.registerGlobalSerializationPlugin('namedPackagesPlugin', plugin);
-
+        
         const extensions = await Extensions.init(client);
         const user = await User.init(client, config.accountType.type, userAddr);
-
+        
         const account = new config.accountType(client);
         await account.init(accountId);
-
+        
         let intents: Intents | undefined;
         let managedAssets: Managed | undefined;
         let ownedObjects: Owned | undefined;
