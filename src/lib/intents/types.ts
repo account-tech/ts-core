@@ -35,7 +35,8 @@ export const ActionsIntentTypes = {
     ListNfts: `${ACCOUNT_ACTIONS.V1}::kiosk_intents::ListNftsIntent`,
 
     WithdrawAndTransferToVault: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawAndTransferToVaultIntent`,
-    WithdrawAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawAndTransferIntent`,
+    WithdrawObjectsAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawObjectsAndTransferIntent`,
+    WithdrawCoinAndTransfer: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawCoinAndTransferIntent`,
     WithdrawAndVest: `${ACCOUNT_ACTIONS.V1}::owned_intents::WithdrawAndVestIntent`,
 
     UpgradePackage: `${ACCOUNT_ACTIONS.V1}::package_upgrade_intents::UpgradePackageIntent`,

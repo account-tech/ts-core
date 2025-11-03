@@ -149,7 +149,7 @@ export class WithdrawAndTransferToVaultIntent extends Intent {
 }
 
 export class WithdrawObjectsAndTransferIntent extends Intent {
-    static type = ActionsIntentTypes.WithdrawAndTransfer;
+    static type = ActionsIntentTypes.WithdrawObjectsAndTransfer;
     declare args: WithdrawObjectsAndTransferArgs;
 
     async init() {
@@ -286,7 +286,7 @@ export class WithdrawObjectsAndTransferIntent extends Intent {
 }
 
 export class WithdrawCoinAndTransferIntent extends Intent {
-    static type = ActionsIntentTypes.WithdrawAndTransfer;
+    static type = ActionsIntentTypes.WithdrawCoinAndTransfer;
     declare args: WithdrawCoinAndTransferArgs;
 
     async init() {
